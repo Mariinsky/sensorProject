@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
     }
-
     private fun inputCheck() {
         //check length of name input
         editTxtName.addTextChangedListener(object : TextWatcher {
@@ -75,3 +74,4 @@ class MainActivity : AppCompatActivity() {
         })
     }
 }
+
