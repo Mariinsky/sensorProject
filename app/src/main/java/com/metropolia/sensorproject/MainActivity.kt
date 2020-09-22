@@ -8,26 +8,17 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.metropolia.sensorproject.database.User
-import com.metropolia.sensorproject.database.UserDB
-import com.metropolia.sensorproject.database.UserModel
 import com.metropolia.sensorproject.sensors.Steps
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -79,8 +70,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
 
-        // placeholder for permission
+    override fun onResume() {
+        super.onResume()
+
+        // PLACEHOLDER STUFF
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION
