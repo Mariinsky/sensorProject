@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">sensorProject</string>
+    <string name="app_name">StepTracker</string>
+    <string name="name">Step Tracker</string>
+    <string name="enter_name">Name</string>
+    <string name="enter_weight">Weight</string>
+    <string name="enter_height">Height</string>
+    <string name="enter_goal">Daily goal</string>
+    <string name="save_button">Save</string>
+    <string name="suffixStep">steps</string>
+    <string name="suffixWeight">kg</string>
+    <string name="suffixHeight">cm</string>
+
 </resources>
