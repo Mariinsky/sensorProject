@@ -1,6 +1,8 @@
 package com.metropolia.sensorproject
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.AlarmClock.EXTRA_MESSAGE
@@ -22,25 +24,37 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
-    private val db by lazy { UserDB.get(this) }
-
+    lateinit var sharedPreferences: SharedPreferences
+    var isLogedIn = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //val count = ViewModelProviders.of(this).get(UserModel::class.java).getCount()
-        //count.getCount().observe(this, Observer {
-        //Toast.makeText(this@MainActivity, "$count", Toast.LENGTH_SHORT).show()
-
-        //})
-
-
-        inputCheck()
-        btnSave.setOnClickListener {
-            addUser()
+        sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+        isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
+        if(isLogedIn){
             val intent = Intent(this, StepTrackerActivity::class.java)
             startActivity(intent)
+            finish()
         }
+        inputCheck()
+        btnSave.setOnClickListener{
+            val name: String = editTxtName.text.toString()
+            val weight: Int = editTxtWeight.text.toString().toInt()
+            val height: Int = editTxtHeight.text.toString().toInt()
+            val goal: Int = editTxtGoal.text.toString().toInt()
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString("NAME", name)
+            editor.putInt("WEIGHT", weight)
+            editor.putInt("HEIGHT", height)
+            editor.putInt("GOAL", goal)
+            editor.putBoolean("CHECKBOX", true)
+            editor.apply()
 
+            Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, StepTrackerActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun inputCheck() {
@@ -59,21 +73,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun addUser() {
-        var user = User(
-            0,
-            editTxtName.text.toString(),
-            editTxtWeight.text.toString().toInt(),
-            editTxtHeight.text.toString().toInt(),
-            editTxtGoal.text.toString().toInt(),
-        )
-        GlobalScope.launch {
-            val id = db.userDao().insert(user)
-            withContext(Main) {
-                Toast.makeText(this@MainActivity, "$id", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }
