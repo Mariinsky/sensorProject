@@ -1,8 +1,11 @@
 package com.metropolia.sensorproject
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.AlarmClock.EXTRA_MESSAGE
@@ -10,6 +13,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -17,11 +21,14 @@ import androidx.lifecycle.ViewModelProviders
 import com.metropolia.sensorproject.database.User
 import com.metropolia.sensorproject.database.UserDB
 import com.metropolia.sensorproject.database.UserModel
+import com.metropolia.sensorproject.sensors.Steps
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
@@ -72,6 +79,33 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        // placeholder for permission
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions(this as Activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), 100)
+            return
+        }
+
+        GlobalScope.launch(Dispatchers.IO) {
+            Log.i("XXX", "reading file")
+            try {
+                val reader = openFileInput("steps2.txt")?.bufferedReader().use { it?.readText() ?: "-1" }
+                Log.i("XXX", "Reading value $reader")
+                Steps.steps = reader.toInt()
+            } catch (e: Exception) {
+                Log.i("XXX", "error" + e.message.toString())
+            }
+            Log.i("XXX", "reading file done")
+        }
+
+        placeholderbutton.setOnClickListener {
+            startActivity(Intent(this, StepCounterActivity::class.java))
+        }
     }
 }
 
