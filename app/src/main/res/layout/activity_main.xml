@@ -21,7 +21,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTxtName"
+        android:id="@+id/layoutEditName"
         style="@style/MyTextInputLayout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -36,15 +36,15 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView">
-
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTxtName"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTxtWeight"
+        android:id="@+id/layoutEditWeight"
         style="@style/MyTextInputLayout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -55,17 +55,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtName"
+        app:layout_constraintTop_toBottomOf="@+id/layoutEditName"
         app:suffixText="@string/suffixWeight">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTxtWeight"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:inputType="number"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTxtHeight"
+        android:id="@+id/layoutEditHeight"
         style="@style/MyTextInputLayout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -77,17 +79,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtWeight"
+        app:layout_constraintTop_toBottomOf="@+id/layoutEditWeight"
         app:suffixText="@string/suffixHeight">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTxtHeight"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:inputType="number"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTxtGoal"
+        android:id="@+id/layoutEditGoal"
         style="@style/MyTextInputLayout"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -99,19 +103,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtHeight"
+        app:layout_constraintTop_toBottomOf="@+id/layoutEditHeight"
         app:suffixText="@string/suffixStep">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTxtGoal"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:inputType="number"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button"
+        android:id="@+id/btnSave"
         style="@style/Widget.MyApp.MyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -121,7 +127,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtGoal" />
+        app:layout_constraintTop_toBottomOf="@+id/layoutEditGoal" />
 
     <ImageView
         android:id="@+id/imageView"

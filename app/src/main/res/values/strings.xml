@@ -9,5 +9,6 @@
     <string name="suffixStep">steps</string>
     <string name="suffixWeight">kg</string>
     <string name="suffixHeight">cm</string>
+    <string name="name_input_error">Name is more than 20 characters</string>
 
 </resources>
