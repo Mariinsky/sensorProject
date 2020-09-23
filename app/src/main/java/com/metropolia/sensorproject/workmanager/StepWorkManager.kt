@@ -1,4 +1,4 @@
-package com.metropolia.sensorproject.workemanager
+package com.metropolia.sensorproject.workmanager
 
 import android.content.Context
 import android.content.Context.SENSOR_SERVICE
@@ -6,8 +6,8 @@ import android.hardware.SensorManager
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.metropolia.sensorproject.sensors.SensorService
-import com.metropolia.sensorproject.sensors.Steps
+import com.metropolia.sensorproject.services.SensorService
+import com.metropolia.sensorproject.services.Steps
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import java.util.concurrent.TimeUnit

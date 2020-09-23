@@ -1,22 +1,19 @@
 package com.metropolia.sensorproject
 
+import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.Manifest
-import android.app.Activity
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import androidx.core.app.ActivityCompat
-import com.metropolia.sensorproject.sensors.Steps
-import kotlinx.coroutines.Dispatchers
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
@@ -24,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        checkPermissions()
         sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
         if(isLogedIn){
@@ -67,6 +65,61 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    // Permission request
+    private val REQUEST_ALL_NEEDED_PERMISSIONS = 999
+    private val permissions =
+        arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACTIVITY_RECOGNITION,
+        )
+
+    private fun checkPermissions(): Boolean {
+        if (
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_ALL_NEEDED_PERMISSIONS)
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_ALL_NEEDED_PERMISSIONS) {
+            if (grantResults.contains(PackageManager.PERMISSION_DENIED)) {
+                showPermissionsAlert()
+            }
+        }
+    }
+
+    private fun showPermissionsAlert() {
+        AlertDialog
+            .Builder(this)
+            .apply {
+                setTitle("Missing permissions")
+                setMessage("Permissions are needed to use this app")
+                setPositiveButton("I understand") { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this@MainActivity,
+                        permissions,
+                        REQUEST_ALL_NEEDED_PERMISSIONS
+                    )
+                }
+            }
+            .create()
+            .show()
     }
 }
 

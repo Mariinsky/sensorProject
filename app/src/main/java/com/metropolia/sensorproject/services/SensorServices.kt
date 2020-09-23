@@ -1,24 +1,19 @@
-package com.metropolia.sensorproject.sensors
+package com.metropolia.sensorproject.services
 
 import android.Manifest
 import android.app.Activity
-import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
-import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
-
-const val REQUEST_LOCATION_CODE = 100
 
 object Steps {
     var steps = 0
@@ -62,8 +57,7 @@ class LocationService(private val context: Context) {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
-            ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION ), REQUEST_LOCATION_CODE)
+            ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION ), 1)
             return
         }
         locationClient.requestLocationUpdates(
