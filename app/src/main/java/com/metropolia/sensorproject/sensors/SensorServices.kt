@@ -2,13 +2,16 @@ package com.metropolia.sensorproject.sensors
 
 import android.Manifest
 import android.app.Activity
+import android.app.Service
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
+import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -17,24 +20,36 @@ import com.google.android.gms.location.*
 
 const val REQUEST_LOCATION_CODE = 100
 
+object Steps {
+    var steps = 0
+}
+
 class SensorService(private val sensorManager: SensorManager) : SensorEventListener {
 
-    private val accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+    private val accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
     fun registerListener() {
+        if (accSensor == null) {
+            Log.i("XXX", "no sensor")
+        }
+
         accSensor.also {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
     }
     override fun onSensorChanged(event: SensorEvent?) {
-        if(event?.sensor == accSensor) {
-            Log.i("XXX", event?.values?.get(0).toString())
+        if (event != null) {
+            if(event.sensor == accSensor) {
+                Log.i("XXX", "step" + event.values[0].toString())
+                Steps.steps++
+            }
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, value: Int) {
 
     }
+
 }
 
 class LocationService(private val context: Context) {
