@@ -13,7 +13,7 @@ class StepTrackerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_step_tracker)
-        //toolbar.setLogo(R.drawable.ic_human_footprints)
+        toolbar.setLogo(R.drawable.ic_man)
         toolbar.setTitle(R.string.slogan)
         toolbar.setTitleTextColor(getResources().getColor(R.color.dark))
         toolbar.setBackgroundColor(getResources().getColor(R.color.lightPink))
