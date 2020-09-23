@@ -143,6 +143,7 @@
         android:layout_height="wrap_content"
         android:text="PLACEHOLDER ACTIVITY"/>
 
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="127dp"

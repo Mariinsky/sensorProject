@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
     }
-
     private fun inputCheck() {
         //check length of name input
         editTxtName.addTextChangedListener(object : TextWatcher {
@@ -70,7 +69,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 }
-
 
            /* Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show()
             val intent = Intent(this, StepTrackerActivity::class.java)
