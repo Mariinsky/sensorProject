@@ -10,4 +10,10 @@
     <string name="suffixWeight">kg</string>
     <string name="suffixHeight">cm</string>
     <string name="name_input_error">Name is more than 20 characters</string>
+    <string name="text_label_1">Today</string>
+    <string name="text_label_2">Progress</string>
+    <string name="text_label_3">Weather</string>
+    <string name="tab_layout_des">Choosing topic from tabs</string>
+    <string name="slogan">Now walk it out</string>
+
 </resources>

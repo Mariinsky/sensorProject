@@ -12,6 +12,8 @@
         <item name="colorPrimary">@color/pink</item>
         <item name="colorPrimaryDark">@color/dark</item>
         <item name="colorAccent">@color/pink</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Widget.MyApp.MyButton" parent="Widget.MaterialComponents.Button">
@@ -34,7 +36,10 @@
         <item name="colorControlActivated">@color/colorPrimary</item>
 
     </style>
-
+    <style name="CustomTabStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">15dp</item>
+        <item name="android:textColor">@color/dark</item>
+    </style>
 
 
 </resources>
