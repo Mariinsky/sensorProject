@@ -1,25 +1,22 @@
 package com.metropolia.sensorproject
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.Manifest
+import android.app.Activity
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import com.metropolia.sensorproject.sensors.Steps
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
-
+import androidx.core.app.ActivityCompat
+import com.metropolia.sensorproject.sensors.Steps
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
@@ -71,6 +68,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+}
+
+           /* Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, StepTrackerActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -102,5 +107,5 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, StepCounterActivity::class.java))
         }
     }
-}
+}*/
 
