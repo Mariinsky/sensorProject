@@ -15,5 +15,6 @@
     <string name="text_label_3">Weather</string>
     <string name="tab_layout_des">Choosing topic from tabs</string>
     <string name="slogan">Now walk it out</string>
+    <string name="input_empty">Field should not be blank</string>
 
 </resources>
