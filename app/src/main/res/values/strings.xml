@@ -6,6 +6,8 @@
     <string name="enter_height">Height</string>
     <string name="enter_goal">Daily goal</string>
     <string name="save_button">Save</string>
+    <string name="start_button">Start</string>
+    <string name="stop_button">Stop</string>
     <string name="suffixStep">steps</string>
     <string name="suffixWeight">kg</string>
     <string name="suffixHeight">cm</string>
@@ -16,5 +18,9 @@
     <string name="tab_layout_des">Choosing topic from tabs</string>
     <string name="slogan">Now walk it out</string>
     <string name="input_empty">Field should not be blank</string>
+    <string name="initial_step">0</string>
+    <string name="steps">steps</string>
+    <string name="over">/</string>
+
 
 </resources>

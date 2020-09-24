@@ -8,7 +8,6 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_step_tracker.*
 
 class StepTrackerActivity : AppCompatActivity() {
-    //lateinit var preferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,9 +17,6 @@ class StepTrackerActivity : AppCompatActivity() {
         toolbar.setTitleTextColor(getResources().getColor(R.color.dark))
         toolbar.setBackgroundColor(getResources().getColor(R.color.lightPink))
         setupTabs()
-        //preferences = getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
-        //val name = preferences.getString("NAME","")
-        //txtWelcome.text = name
     }
 
     private fun setupTabs() {
