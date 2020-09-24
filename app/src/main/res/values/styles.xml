@@ -14,16 +14,18 @@
         <item name="colorAccent">@color/pink</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/beantown</item>
     </style>
 
+    //style for button
     <style name="Widget.MyApp.MyButton" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/lightPink</item>
         <item name="android:textSize">20dp</item>
         <item name="android:textColor">@color/dark</item>
         <item name="elevation">2dp</item>
-
     </style>
 
+    //style for text input
     <style name="MyTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <!-- Style attributes -->
         <item name="boxCornerRadiusBottomStart">24dp</item>
@@ -34,12 +36,11 @@
         <item name="android:textColorHint">#80000000</item>
         <item name="colorControlNormal">#000</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
-
     </style>
+
+    //style for tab bar
     <style name="CustomTabStyle" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">15dp</item>
         <item name="android:textColor">@color/dark</item>
     </style>
-
-
 </resources>
