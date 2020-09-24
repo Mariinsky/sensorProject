@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
-import com.metropolia.sensorproject.services.Steps
+import com.metropolia.sensorproject.services.DataStreams
 import com.metropolia.sensorproject.workmanager.StepWorkManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -26,7 +26,7 @@ class StepCounterActivity : AppCompatActivity() {
             .timeInterval()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                steps_text.text = Steps.steps.toString()
+                steps_text.text = DataStreams.steps.toString()
             }
     }
 }
