@@ -8,11 +8,14 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 class ProgressViewModel(application: Application) : AndroidViewModel(application) {
 
+    val context = getApplication<Application>().applicationContext
     val emitStepsCount: PublishSubject<Int> = PublishSubject.create()
+    var stepCount = DataStreams.getStepCount()
     private val getStepCount =
         DataStreams
             .stepCountSubject
             .subscribe {
+                stepCount = it
                 emitStepsCount.onNext(it)
             }
 

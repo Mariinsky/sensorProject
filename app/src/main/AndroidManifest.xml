@@ -19,11 +19,14 @@
         android:supportsRtl="true"
         android:theme="@style/NewTheme"
         >
-        <activity android:name=".StepTrackerActivity" />
-        <activity android:name=".StepCounterActivity" />
+        <activity android:name=".StepTrackerActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".StepCounterActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:windowSoftInputMode="adjustPan"
-            android:name=".MainActivity">
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -16,6 +16,10 @@ import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.core.app.ActivityCompat
+import com.metropolia.sensorproject.services.DataStreams
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         checkPermissions()
+        readStepFromFile()
         sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
         if(isLogedIn){
@@ -198,5 +203,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             .create()
             .show()
+    }
+
+    private fun readStepFromFile() {
+        GlobalScope.launch(Dispatchers.IO) {
+            Log.i("XXX", "reading file")
+            try {
+                val reader = openFileInput("steps2.txt")?.bufferedReader().use { it?.readText() ?: "-1" }
+                Log.i("XXX", "Reading value $reader")
+                DataStreams.updateStepCount(reader.toInt())
+            } catch (e: Exception) {
+                Log.i("XXX", "error" + e.message.toString())
+            }
+            Log.i("XXX", "reading file done")
+        }
     }
 }

@@ -22,8 +22,8 @@ object DataStreams {
     val stepCountSubject: PublishSubject<Int> = PublishSubject.create()
     val locationSubject: PublishSubject<Location> = PublishSubject.create()
 
-    fun updateStepCount() {
-        stepCount ++
+    fun updateStepCount(steps: Int? = null) {
+        if (steps == null ) { stepCount ++ } else { stepCount = steps }
         stepCountSubject.onNext(stepCount)
     }
 

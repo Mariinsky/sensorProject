@@ -26,7 +26,7 @@ class StepCounterActivity : AppCompatActivity() {
             .timeInterval()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                steps_text.text = DataStreams.steps.toString()
+                steps_text.text = DataStreams.getStepCount().toString()
             }
     }
 }
