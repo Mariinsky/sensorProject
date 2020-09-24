@@ -38,22 +38,19 @@ class TodayFragment : Fragment() {
         val goal = preferences.getInt("GOAL", 0)
         view.txt_goal_step.text = goal.toString()
         view.progressBar.max = goal
-
+        view.txt_total_step.text = viewModel.stepCount.toString()
+        view.progressBar.progress = viewModel.stepCount
+        view.txtKcal.text = (viewModel.stepCount * 0.4).toInt().toString()
         return view
     }
 
     override fun onResume() {
         super.onResume()
-
         btnStart.setOnClickListener {
             val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>().build()
             WorkManager.getInstance(activity!!.application).enqueue(stepWorker)
         }
-
-        txt_total_step.text = viewModel.stepCount.toString()
-        progressBar.progress = viewModel.stepCount
-        txtKcal.text = (viewModel.stepCount * 0.4).toInt().toString()
-
+        
         viewModel
             .emitStepsCount
             .observeOn(AndroidSchedulers.mainThread())
