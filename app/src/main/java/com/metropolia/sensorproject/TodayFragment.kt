@@ -16,6 +16,7 @@ import com.metropolia.sensorproject.workmanager.StepWorkManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_today.*
 import kotlinx.android.synthetic.main.fragment_today.view.*
+import kotlin.math.round
 
 
 class TodayFragment : Fragment() {
@@ -50,14 +51,15 @@ class TodayFragment : Fragment() {
             val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>().build()
             WorkManager.getInstance(activity!!.application).enqueue(stepWorker)
         }
-        
+
         viewModel
             .emitStepsCount
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 txt_total_step.text = it.toString()
                 progressBar.progress = it
-                txtKcal.text = (it * 0.4).toInt().toString()
+                val kcal = round(it*0.4*100) / 100
+                txtKcal.text = kcal.toString()
             }
     }
 }
