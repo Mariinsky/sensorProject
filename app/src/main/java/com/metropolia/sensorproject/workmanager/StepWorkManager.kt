@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.metropolia.sensorproject.services.SensorService
-import com.metropolia.sensorproject.services.Steps
+import com.metropolia.sensorproject.services.DataStreams
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import java.util.concurrent.TimeUnit
@@ -19,16 +19,15 @@ class StepWorkManager(private val context: Context, params: WorkerParameters): W
         Log.i("XXX", "WORK STARTED")
         val sen = SensorService(context.getSystemService(SENSOR_SERVICE) as SensorManager)
         sen.registerListener()
-        Observable.interval(5, TimeUnit.SECONDS)
+        Observable
+            .interval(5, TimeUnit.SECONDS)
             .timeInterval()
             .observeOn(io())
             .subscribe {
-                if (Steps.steps != 0) {
+                if (DataStreams.getStepCount() != 0) {
                     context.openFileOutput("steps2.txt", Context.MODE_PRIVATE).use {
-                        Log.i("XXX", "writing to file ${Steps.steps}")
-                        it?.write(Steps.steps.toString().toByteArray())
+                        it?.write(DataStreams.getStepCount().toString().toByteArray())
                     }
-                    Log.i("XXX", "writing to file done")
                 }
             }
         return Result.success()

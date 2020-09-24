@@ -146,11 +146,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutEditGoal" />
 
-    <Button
-        android:id="@+id/placeholderbutton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PLACEHOLDER ACTIVITY"/>
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="127dp"
