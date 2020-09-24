@@ -23,6 +23,7 @@
         <item name="android:textSize">20dp</item>
         <item name="android:textColor">@color/dark</item>
         <item name="elevation">2dp</item>
+        <item name="cornerRadius">24dp</item>
     </style>
 
     //style for text input
