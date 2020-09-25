@@ -11,28 +11,58 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_today.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import com.metropolia.sensorproject.models.ProgressViewModel
+import com.metropolia.sensorproject.workmanager.StepWorkManager
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_today.*
+import kotlinx.android.synthetic.main.fragment_today.view.*
+import kotlin.math.round
 
 class TodayFragment : Fragment() {
-    lateinit var preferences: SharedPreferences
+    private lateinit var preferences: SharedPreferences
+    private lateinit var viewModel: ProgressViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout and set element for this fragment
-        val rootView = inflater.inflate(R.layout.fragment_today,container,false)
-        val twGoal: TextView = rootView.findViewById(R.id.txt_goal_step)
-        val progressBar: ProgressBar = rootView.findViewById(R.id.progressBar)
-        // get goal data from shared preferences
-        preferences = getActivity()!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+        // get goal data from shared preferences y
+        val view = inflater.inflate(R.layout.fragment_today,container,false)
+        preferences = activity!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         val goal = preferences.getInt("GOAL", 0)
-        twGoal!!.text = goal.toString()
-        progressBar.max = goal
-        progressBar.progress =1500
-        return rootView
+        view.txt_goal_step.text = goal.toString()
+        view.progressBar.max = goal
+
+        return view
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
+        btnStart.setOnClickListener {
+            val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>().build()
+            WorkManager.getInstance(activity!!.application).enqueue(stepWorker)
+        }
+        txt_total_step.text = viewModel.stepCount.toString()
+        progressBar.progress = viewModel.stepCount
+        txtKcal.text = (viewModel.stepCount * 0.4).toInt().toString()
 
+        viewModel
+            .emitStepsCount
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                txt_total_step.text = it.toString()
+                progressBar.progress = it
+                val kcal = round(it*0.4*100) / 100
+                txtKcal.text = kcal.toString()
+            }
     }
 }
