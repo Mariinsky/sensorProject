@@ -14,10 +14,10 @@ import java.util.concurrent.TimeUnit
 
 
 class StepWorkManager(private val context: Context, params: WorkerParameters): Worker(context, params) {
-
+    private lateinit var sen: SensorService
     override fun doWork(): Result {
         Log.i("XXX", "WORK STARTED")
-        val sen = SensorService(context.getSystemService(SENSOR_SERVICE) as SensorManager)
+        sen = SensorService(context.getSystemService(SENSOR_SERVICE) as SensorManager)
         sen.registerListener()
         Observable
             .interval(5, TimeUnit.SECONDS)
@@ -30,7 +30,14 @@ class StepWorkManager(private val context: Context, params: WorkerParameters): W
                     }
                 }
             }
+
         return Result.success()
+    }
+
+    override fun onStopped() {
+        super.onStopped()
+        Log.i("XXX", "stopped")
+        sen.unregisterListener()
     }
 
 }

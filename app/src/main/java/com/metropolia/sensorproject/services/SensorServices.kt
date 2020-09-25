@@ -40,6 +40,10 @@ class SensorService(private val sensorManager: SensorManager) : SensorEventListe
         }
     }
 
+    fun unregisterListener() {
+        sensorManager.unregisterListener(this)
+    }
+
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
             if(event.sensor == stepDetectorSensor) {

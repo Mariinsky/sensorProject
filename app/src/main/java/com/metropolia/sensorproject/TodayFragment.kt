@@ -25,10 +25,13 @@ import kotlin.math.round
 class TodayFragment : Fragment() {
     private lateinit var preferences: SharedPreferences
     private lateinit var viewModel: ProgressViewModel
+    private lateinit var workManager: WorkManager
+    private var start = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
+        workManager = WorkManager.getInstance(activity!!.application)
     }
 
     override fun onCreateView(
@@ -48,8 +51,18 @@ class TodayFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         btnStart.setOnClickListener {
-            val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>().build()
-            WorkManager.getInstance(activity!!.application).enqueue(stepWorker)
+            if (!start) {
+                val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>()
+                    .addTag("step")
+                    .build()
+                workManager.enqueue(stepWorker)
+                start = true
+                btnStart.text = "Stop"
+            } else {
+                start = false
+                btnStart.text = "start"
+                workManager.cancelAllWork()
+            }
         }
         txt_total_step.text = viewModel.stepCount.toString()
         progressBar.progress = viewModel.stepCount
