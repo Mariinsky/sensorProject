@@ -3,23 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:backgroundTint="@color/lightPink"
-    tools:context=".MainActivity"
-    >
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="Step Tracker App"
-        android:text="@string/app_name"
-        android:textColor="@color/dark"
-        android:textSize="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="50dp"
+        android:gravity="center_horizontal"
+        android:text="@string/user_update_title"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutEditName"
@@ -27,19 +25,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="50dp"
-        android:layout_marginTop="50dp"
         android:contentDescription="Enter name"
         android:gravity="center"
         android:hint="@string/enter_name"
         app:counterEnabled="true"
         app:counterMaxLength="20"
-        app:errorEnabled="true"
         app:endIconMode="clear_text"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTxtName"
             android:layout_width="match_parent"
@@ -58,10 +57,10 @@
         android:contentDescription="Enter weight"
         android:gravity="center"
         android:hint="@string/enter_weight"
-        app:endIconMode="clear_text"
-        app:errorEnabled="true"
         app:counterEnabled="true"
         app:counterMaxLength="3"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,10 +86,10 @@
         android:contentDescription="Enter height"
         android:gravity="center"
         android:hint="@string/enter_height"
-        app:endIconMode="clear_text"
-        app:errorEnabled="true"
         app:counterEnabled="true"
         app:counterMaxLength="3"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -132,34 +131,33 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSave"
-        style="@style/Widget.MyApp.MyButton"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/save_button"
-        app:cornerRadius="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layoutEditGoal" />
+        app:layout_constraintTop_toBottomOf="@+id/layoutEditGoal">
 
-    <Button
-        android:id="@+id/placeholderbutton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PLACEHOLDER ACTIVITY"/>
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="127dp"
-        android:layout_height="153dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_human_footprints" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            style="@style/Widget.MyApp.MyButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/save_button"
+            app:cornerRadius="24dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/Widget.MyApp.MyButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_button"
+            app:cornerRadius="24dp" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

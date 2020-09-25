@@ -1,11 +1,9 @@
 package com.metropolia.sensorproject
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_step_tracker.*
+
 
 class StepTrackerActivity : AppCompatActivity() {
 
@@ -17,6 +15,11 @@ class StepTrackerActivity : AppCompatActivity() {
         toolbar.setTitleTextColor(getResources().getColor(R.color.dark))
         toolbar.setBackgroundColor(getResources().getColor(R.color.lightPink))
         setupTabs()
+        val intent = intent
+        if (intent.hasExtra("TabNumber")) {
+            val tab = intent.getStringExtra("TabNumber")
+            switchToTab(tab)
+        }
     }
 
     private fun setupTabs() {
@@ -32,5 +35,16 @@ class StepTrackerActivity : AppCompatActivity() {
         tablayout.getTabAt(0)!!.setIcon(R.drawable.ic_footprint)
         tablayout.getTabAt(1)!!.setIcon(R.drawable.ic_development)
         tablayout.getTabAt(2)!!.setIcon(R.drawable.ic_storm)
+    }
+
+    //display specific tab when redirect to this activity
+    fun switchToTab(tab: String?) {
+        if (tab == "0") {
+            viewPager.currentItem = 0
+        } else if (tab == "1") {
+            viewPager.currentItem = 1
+        } else if (tab == "2") {
+            viewPager.currentItem = 2
+        }
     }
 }

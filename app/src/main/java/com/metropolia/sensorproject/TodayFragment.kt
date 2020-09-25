@@ -3,10 +3,14 @@ package com.metropolia.sensorproject
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
+import kotlinx.android.synthetic.main.fragment_today.*
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -17,7 +21,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_today.*
 import kotlinx.android.synthetic.main.fragment_today.view.*
 import kotlin.math.round
-
 
 class TodayFragment : Fragment() {
     private lateinit var preferences: SharedPreferences
@@ -32,16 +35,13 @@ class TodayFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout and set element for this fragment
-        val view = inflater.inflate(R.layout.fragment_today,container,false)
         // get goal data from shared preferences y
+        val view = inflater.inflate(R.layout.fragment_today,container,false)
         preferences = activity!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         val goal = preferences.getInt("GOAL", 0)
         view.txt_goal_step.text = goal.toString()
         view.progressBar.max = goal
-        view.txt_total_step.text = viewModel.stepCount.toString()
-        view.progressBar.progress = viewModel.stepCount
-        view.txtKcal.text = (viewModel.stepCount * 0.4).toInt().toString()
+
         return view
     }
 
@@ -51,6 +51,9 @@ class TodayFragment : Fragment() {
             val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>().build()
             WorkManager.getInstance(activity!!.application).enqueue(stepWorker)
         }
+        txt_total_step.text = viewModel.stepCount.toString()
+        progressBar.progress = viewModel.stepCount
+        txtKcal.text = (viewModel.stepCount * 0.4).toInt().toString()
 
         viewModel
             .emitStepsCount

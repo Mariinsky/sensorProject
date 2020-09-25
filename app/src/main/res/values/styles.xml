@@ -44,4 +44,11 @@
         <item name="android:textSize">15dp</item>
         <item name="android:textColor">@color/dark</item>
     </style>
+
+    //style for floating button
+    <style name="MyFloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:backgroundTint">@color/lightPink</item>
+        <item name="android:strokeColor">@color/darkPink</item>
+        <item name="android:elevation">6dp</item>
+    </style>
 </resources>

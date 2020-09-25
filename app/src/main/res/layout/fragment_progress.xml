@@ -3,15 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ProgressFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/textView2"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="progrss"
-        tools:layout_editor_absoluteX="120dp"
-        tools:layout_editor_absoluteY="238dp" />
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:rippleColor="@color/lightPink"
+        android:contentDescription="@string/floating_button_des"
+        app:srcCompat="@drawable/ic_baseline_settings_24"
+        style="@style/MyFloatingActionButton"
+        />
 
 </FrameLayout>
