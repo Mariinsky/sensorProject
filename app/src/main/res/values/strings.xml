@@ -8,10 +8,12 @@
     <string name="save_button">Save</string>
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>
+    <string name="cancel_button">Cancel</string>
     <string name="suffixStep">steps</string>
     <string name="suffixWeight">kg</string>
     <string name="suffixHeight">cm</string>
-    <string name="name_input_error">Name is more than 20 characters</string>
+    <string name="name_input_error">No more than 20 characters</string>
+    <string name="input_error">No more than 3 characters</string>
     <string name="text_label_1">Today</string>
     <string name="text_label_2">Progress</string>
     <string name="text_label_3">Weather</string>
@@ -21,6 +23,7 @@
     <string name="initial_step">0</string>
     <string name="steps">steps</string>
     <string name="over">/</string>
-
+    <string name="floating_button_des">Update user data</string>
+    <string name="user_update_title">Update data</string>
 
 </resources>
