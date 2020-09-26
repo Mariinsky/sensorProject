@@ -17,16 +17,18 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/NewTheme"
-        >
-        <activity android:name=".StepTrackerActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".StepCounterActivity"
+        android:theme="@style/NewTheme">
+        <activity android:name=".debug.DevActivity"></activity>
+        <activity
+            android:name=".StepTrackerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:windowSoftInputMode="adjustPan"
+            android:name=".StepCounterActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

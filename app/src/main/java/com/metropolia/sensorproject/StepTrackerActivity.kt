@@ -1,7 +1,9 @@
 package com.metropolia.sensorproject
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.metropolia.sensorproject.debug.DevActivity
 import kotlinx.android.synthetic.main.activity_step_tracker.*
 
 
@@ -20,6 +22,11 @@ class StepTrackerActivity : AppCompatActivity() {
             val tab = intent.getStringExtra("TabNumber")
             switchToTab(tab)
         }
+
+       toolbar.setOnClickListener {
+           startActivity(Intent(this, DevActivity::class.java))
+       }
+
     }
 
     private fun setupTabs() {
