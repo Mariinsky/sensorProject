@@ -74,6 +74,6 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "androidx.work:work-rxjava2:$work_version"
 
-
-
+    //Graph
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

@@ -13,6 +13,10 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -32,7 +36,6 @@ import java.util.*
 
 class ProgressFragment : Fragment() {
     lateinit var preferences: SharedPreferences
-
     private lateinit var viewModel: ProgressViewModel
     private var goal = 0
 
@@ -121,7 +124,7 @@ class ProgressFragment : Fragment() {
             .limitedActivitiesSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                prgress_container.removeAllViews()
+                /*prgress_container.removeAllViews()
                 if (it.isNotEmpty()) {
                     day_details.text = "${getFormattedDate(it.first().date)} ${it.first().Steps} steps"
                 } else {
@@ -136,7 +139,20 @@ class ProgressFragment : Fragment() {
                             day_details.text = "${getFormattedDate(day.date)} ${day.Steps} steps"
                         }
                         prgress_container.addView(v)
-                    }
+                    }*/
+                it.forEach {day ->
+                    val entries = ArrayList<BarEntry>()
+                    for(x in 0..7) entries.add(BarEntry(day.Steps.toFloat(),x.toFloat()))
+                    val barDataSet = BarDataSet(entries, "Steps")
+                    val labels = ArrayList<String>()
+                    labels.add(SimpleDateFormat("EE", Locale.ENGLISH).format(day.date))
+                    val data = BarData(barDataSet)
+                    data.setBarWidth(0.9f)
+                    barchart.data = data
+                    barchart.setFitBars(true); // make the x-axis fit exactly all bars
+                    barchart.invalidate(); // refresh// set the data and list of lables into chart
+                }
+
             }
         viewModel.getLimitedActivities(7)
     }

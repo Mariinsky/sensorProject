@@ -57,10 +57,10 @@ class TodayFragment : Fragment() {
                     .build()
                 workManager.enqueue(stepWorker)
                 start = true
-                btnStart.text = "Stop"
+                btnStart.text = getString(R.string.stop_button)
             } else {
                 start = false
-                btnStart.text = "start"
+                btnStart.text = getString(R.string.start_button)
                 workManager.cancelAllWork()
             }
         }
