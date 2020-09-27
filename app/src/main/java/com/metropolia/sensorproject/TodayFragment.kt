@@ -16,6 +16,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.metropolia.sensorproject.models.ProgressViewModel
+import com.metropolia.sensorproject.services.LocationService
 import com.metropolia.sensorproject.workmanager.StepWorkManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_today.*
@@ -26,12 +27,14 @@ class TodayFragment : Fragment() {
     private lateinit var preferences: SharedPreferences
     private lateinit var viewModel: ProgressViewModel
     private lateinit var workManager: WorkManager
+    private lateinit var locationService: LocationService
     private var start = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         workManager = WorkManager.getInstance(activity!!.application)
+        locationService = LocationService(context)
     }
 
     override fun onCreateView(
@@ -56,10 +59,12 @@ class TodayFragment : Fragment() {
                     .addTag("step")
                     .build()
                 workManager.enqueue(stepWorker)
+                locationService.startGettingLocation()
                 start = true
                 btnStart.text = "Stop"
             } else {
                 start = false
+                locationService.stopLocationService()
                 btnStart.text = "start"
                 workManager.cancelAllWork()
             }
