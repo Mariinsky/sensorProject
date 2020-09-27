@@ -1,6 +1,5 @@
 package com.metropolia.sensorproject
 
-
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
@@ -13,18 +12,29 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.core.app.ActivityCompat
+import com.metropolia.sensorproject.database.AppDB
+import com.metropolia.sensorproject.database.DayActivity
 import com.metropolia.sensorproject.services.DataStreams
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.metropolia.sensorproject.services.WeatherApi
+import com.metropolia.sensorproject.utils.compareDate
+import com.metropolia.sensorproject.workmanager.FILE_STEPS
+import com.metropolia.sensorproject.workmanager.ZERO_STEPS
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers.io
+import io.reactivex.rxjava3.subjects.PublishSubject
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var sharedPreferences: SharedPreferences
     private val REQUEST_ALL_NEEDED_PERMISSIONS = 999
+    private val db by lazy { AppDB.get(application) }
+    private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
+    private val appReadySubject: PublishSubject<Int> = PublishSubject.create()
     private val permissions =
         arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -35,18 +45,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        checkPermissions()
-        readStepFromFile()
         sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
-        if(isLogedIn){
-            val intent = Intent(this, StepTrackerActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
         inputCheck()
         btnSave.setOnClickListener(this)
 
+        checkedPermissionSubject
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                checkDateAndStart()
+            }
+
+        appReadySubject
+            .delay(1, TimeUnit.SECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                DataStreams.updateStepCount(it)
+                if(isLogedIn){
+                    val intent = Intent(this, StepTrackerActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    loading.visibility = View.GONE
+                }
+            }
+
+        checkPermissions()
     }
 
     private fun validate(): Boolean {
@@ -158,7 +182,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private fun checkPermissions(): Boolean {
+    private fun checkPermissions(){
         if (
             ActivityCompat.checkSelfPermission(
                 this,
@@ -170,9 +194,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_ALL_NEEDED_PERMISSIONS)
-            return false
+        } else {
+            checkedPermissionSubject.onNext(Unit)
         }
-        return true
     }
 
     override fun onRequestPermissionsResult(
@@ -183,6 +207,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (requestCode == REQUEST_ALL_NEEDED_PERMISSIONS) {
             if (grantResults.contains(PackageManager.PERMISSION_DENIED)) {
                 showPermissionsAlert()
+            } else {
+                checkedPermissionSubject.onNext(Unit)
             }
         }
     }
@@ -205,17 +231,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .show()
     }
 
-    private fun readStepFromFile() {
-        GlobalScope.launch(Dispatchers.IO) {
-            Log.i("XXX", "reading file")
-            try {
-                val reader = openFileInput("steps2.txt")?.bufferedReader().use { it?.readText() ?: "-1" }
-                Log.i("XXX", "Reading value $reader")
-                DataStreams.updateStepCount(reader.toInt())
-            } catch (e: Exception) {
-                Log.i("XXX", "error" + e.message.toString())
-            }
-            Log.i("XXX", "reading file done")
+    private fun readStepFromFile(): Int {
+        return try {
+            val reader = openFileInput(FILE_STEPS)?.bufferedReader().use { it?.readText() ?: "-1" }
+            reader.toInt()
+        } catch (e: Exception) {
+            Log.i("XXX", "error" + e.message.toString())
+            return -1
         }
+    }
+
+    private fun checkDateAndStart() {
+        Observable
+            .just { db.activityDao().getLimitedActivities(1) }
+            .observeOn(io())
+            .map { it() }
+            .subscribe {
+                if (!it.isNullOrEmpty()) {
+                    if(!compareDate(it.first().date)) {
+                        db.activityDao().insert(DayActivity(Date(), readStepFromFile()))
+                        this.openFileOutput(FILE_STEPS, Context.MODE_PRIVATE).use { os ->
+                            os.write(ZERO_STEPS.toString().toByteArray())
+                        }
+                        appReadySubject.onNext(ZERO_STEPS)
+                    } else {
+                        appReadySubject.onNext(readStepFromFile())
+                    }
+                } else {
+                    appReadySubject.onNext(ZERO_STEPS)
+                }
+            }
     }
 }

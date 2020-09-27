@@ -25,7 +25,7 @@ class StepWorkManager(private val context: Context, params: WorkerParameters): W
             .observeOn(io())
             .subscribe {
                 if (DataStreams.getStepCount() != 0) {
-                    context.openFileOutput("steps2.txt", Context.MODE_PRIVATE).use {
+                    context.openFileOutput(FILE_STEPS, Context.MODE_PRIVATE).use {
                         it?.write(DataStreams.getStepCount().toString().toByteArray())
                     }
                 }
