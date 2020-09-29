@@ -48,7 +48,7 @@ object DataStreams {
         stepCountSubject.onNext(stepCount)
     }
 
-    fun getWeater() { getCurrentWeather.onNext(Unit) }
+    fun getWeather() { getCurrentWeather.onNext(Unit) }
 
     fun getStepCount(): Int { return stepCount }
 }
