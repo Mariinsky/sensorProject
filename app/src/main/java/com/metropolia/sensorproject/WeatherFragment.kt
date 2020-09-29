@@ -49,7 +49,6 @@ class WeatherFragment : Fragment() {
                 txtDirection.setText("$direction")
                 weather_icon.setImageBitmap(icon)
                 rotateImage(pointer,weather.current.wind_deg)
-                //loading.visibility = View.GONE
 
                 gif.visibility = View.GONE
             }

@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/custom_border"
             android:weightSum="2"
@@ -109,8 +109,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginEnd="10dp"
-                        app:srcCompat="@drawable/ic_wind"
-                        />
+                        app:srcCompat="@drawable/ic_wind" />
 
                     <TextView
                         android:id="@+id/txtWind"
