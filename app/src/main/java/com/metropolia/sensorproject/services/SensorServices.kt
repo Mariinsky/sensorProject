@@ -1,6 +1,7 @@
 package com.metropolia.sensorproject.services
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -122,5 +123,12 @@ class LocationService(private val context: Context): LocationListener {
 
     override fun onLocationChanged(location: Location?) {
         Log.i("XXX", "on location changed: ${location?.speed}")
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getLocation() {
+         locationClient.lastLocation.addOnSuccessListener {
+                DataStreams.locationSubject.onNext(it)
+         }
     }
 }
