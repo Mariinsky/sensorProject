@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.metropolia.sensorproject.services.DataStreams
+import com.metropolia.sensorproject.services.DayDescription
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.fragment_weather.*
@@ -17,6 +19,9 @@ import java.net.URL
 
 
 class WeatherFragment : Fragment() {
+    private lateinit var dayList : List<DayDescription>
+    private lateinit var dayAdapter: CustomAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -26,6 +31,7 @@ class WeatherFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
@@ -50,6 +56,14 @@ class WeatherFragment : Fragment() {
                 weather_icon.setImageBitmap(icon)
                 rotateImage(pointer,weather.current.wind_deg)
 
+                //recycler view for 7 days forecast
+                /*dayAdapter = CustomAdapter(dayList)
+                val mLayoutManager = LinearLayoutManager(activity)
+                mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+                lv_weather.layoutManager = mLayoutManager
+                lv_weather.adapter = dayAdapter
+                dayList = weather.daily*/
+                //loading disappears after data loaded
                 gif.visibility = View.GONE
             }
         DataStreams.getWeather()
@@ -67,5 +81,5 @@ class WeatherFragment : Fragment() {
         matrix.postRotate(angle.toFloat(), image.getDrawable().getBounds().width()/2.toFloat(),image.getDrawable().getBounds().height()/2.toFloat())
         image.setImageMatrix(matrix)
     }
-
 }
+

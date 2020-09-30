@@ -38,7 +38,8 @@ data class Weather(
     val lat: Float,
     val lon: Float,
     val timezone: String,
-    val current: Current
+    val current: Current,
+    //val daily: List<DayDescription>
 )
 
 data class Current (
@@ -55,4 +56,14 @@ data class WeatherDescription (
     val main: String,
     val description: String,
     val icon: String
+)
+
+data class DayDescription (
+    val temp: Temp,
+    val weather: List<WeatherDescription>
+)
+
+data class Temp (
+    val day: Float,
+    val night: Float
 )
