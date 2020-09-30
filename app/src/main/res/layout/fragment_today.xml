@@ -16,8 +16,9 @@
             style="@style/Widget.MyApp.MyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:contentDescription="@string/start_button"
             android:text="@string/start_button"
-            android:layout_marginTop="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -143,6 +144,10 @@
                     android:textColor="@color/dark"
                     android:textSize="30sp" />
             </LinearLayout>
+            <View
+                android:layout_height="match_parent"
+                android:layout_width="1dp"
+                android:background="@color/white"/>
 
             <LinearLayout
                 android:layout_width="100dp"
@@ -169,6 +174,10 @@
                     android:textSize="30sp" />
 
             </LinearLayout>
+            <View
+                android:layout_height="match_parent"
+                android:layout_width="1dp"
+                android:background="@color/white"/>
 
             <LinearLayout
                 android:layout_width="100dp"

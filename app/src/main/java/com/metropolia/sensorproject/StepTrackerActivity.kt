@@ -1,5 +1,6 @@
 package com.metropolia.sensorproject
 
+
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +23,6 @@ class StepTrackerActivity : AppCompatActivity() {
             val tab = intent.getStringExtra("TabNumber")
             switchToTab(tab)
         }
-
        toolbar.setOnClickListener {
            startActivity(Intent(this, DevActivity::class.java))
        }
