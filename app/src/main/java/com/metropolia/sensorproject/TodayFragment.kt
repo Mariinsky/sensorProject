@@ -62,11 +62,11 @@ class TodayFragment : Fragment() {
                 //locationService.startGettingLocation()
                 locationService.getLocation()
                 start = true
-                btnStart.text = "Stop"
+                btnStart.text = getString(R.string.stop_button)
             } else {
                 start = false
+                btnStart.text = getString(R.string.start_button)
                 locationService.stopLocationService()
-                btnStart.text = "start"
                 workManager.cancelAllWork()
             }
         }
