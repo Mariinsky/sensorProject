@@ -29,24 +29,25 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
+
         DataStreams
             .weatherSubject
             .take(1)
             .observeOn(io())
             .map {
-                val url = URL("https://openweathermap.org/img/wn/${it.current.weather[0].icon}@4x.png")
+                val url = URL(it.icon)
                 val imgStream = url.openConnection().getInputStream()
                 Pair(it, BitmapFactory.decodeStream(imgStream))
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {(weather, icon) ->
-                txtTemp.setText("${weather.current.temp} °F")
-                txtMain.setText("${weather.current.weather[0].main}")
-                txtFeel.setText("Feels like ${weather.current.feels_like} °F")
-                txtHumidity.setText("${weather.current.humidity}%")
-                txtWind.setText("${weather.current.win_speed} mph")
+                txtTemp.text = weather.curentTemp
+                txtMain.text = weather.description
+                txtFeel.text = weather.feelsLike
+                txtHumidity.text = weather.humidity
+                txtWind.text = weather.windSpeed
                 val direction = degToCompass(weather.current.wind_deg)
-                txtDirection.setText("$direction")
+                txtDirection.text = direction
                 weather_icon.setImageBitmap(icon)
                 rotateImage(pointer,weather.current.wind_deg)
 
@@ -65,7 +66,7 @@ class WeatherFragment : Fragment() {
         val matrix = Matrix()
         image.scaleType= ImageView.ScaleType.MATRIX
         matrix.postRotate(angle.toFloat(), image.getDrawable().getBounds().width()/2.toFloat(),image.getDrawable().getBounds().height()/2.toFloat())
-        image.setImageMatrix(matrix)
+        image.imageMatrix = matrix
     }
 
 }
