@@ -49,6 +49,9 @@ data class Weather(
     val windSpeed: String
         get() { return "${current.wind_speed} m/s"}
 
+    val windDirection: Int
+        get() { return current.wind_deg + 180}
+
     val humidity: String
         get() { return "${current.humidity} %"}
 

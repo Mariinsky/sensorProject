@@ -194,7 +194,7 @@
                     app:tint="@color/darkPink"
                     android:src="@drawable/ic_timer" />
 
-                <TextView
+                <Chronometer
                     android:id="@+id/txtTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
