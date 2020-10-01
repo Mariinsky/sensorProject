@@ -6,18 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
 import com.metropolia.sensorproject.services.DataStreams
-import com.metropolia.sensorproject.services.WeatherApi
+import com.metropolia.sensorproject.services.LocationService
 import com.metropolia.sensorproject.utils.compareDate
 import com.metropolia.sensorproject.workmanager.FILE_STEPS
 import com.metropolia.sensorproject.workmanager.ZERO_STEPS
@@ -25,6 +25,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val db by lazy { AppDB.get(application) }
     private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
     private val appReadySubject: PublishSubject<Int> = PublishSubject.create()
+    private lateinit var locationService: LocationService
     private val permissions =
         arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        locationService = LocationService(this)
         sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
         inputCheck()
@@ -54,6 +57,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 checkDateAndStart()
+                locationService.getLocation()
             }
 
         appReadySubject
@@ -262,4 +266,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
     }
+
+
 }

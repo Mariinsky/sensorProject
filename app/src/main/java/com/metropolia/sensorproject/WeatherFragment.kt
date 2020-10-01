@@ -1,13 +1,14 @@
 package com.metropolia.sensorproject
 
-import android.content.Context
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.metropolia.sensorproject.services.DataStreams
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers.io
@@ -25,6 +26,9 @@ class WeatherFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Glide.with(this)
+            .load(R.drawable.giphy)
+            .into(gif)
         DataStreams
             .weatherSubject
             .take(1)
@@ -36,11 +40,32 @@ class WeatherFragment : Fragment() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {(weather, icon) ->
-                textView2.text = weather.current.temp.toString()
+                txtTemp.setText("${weather.current.temp} °F")
+                txtMain.setText("${weather.current.weather[0].main}")
+                txtFeel.setText("Feels like ${weather.current.feels_like} °F")
+                txtHumidity.setText("${weather.current.humidity}%")
+                txtWind.setText("${weather.current.win_speed} mph")
+                val direction = degToCompass(weather.current.wind_deg)
+                txtDirection.setText("$direction")
                 weather_icon.setImageBitmap(icon)
-                loading.visibility = View.GONE
-            }
+                rotateImage(pointer,weather.current.wind_deg)
 
-        DataStreams.getWeater()
+                gif.visibility = View.GONE
+            }
+        DataStreams.getWeather()
     }
+
+    private fun degToCompass(num: Int): String {
+        val degree = num / 22.5 + 0.5
+        val arr = arrayOf<String>("N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW")
+        return arr[(degree % 16).toInt()]
+    }
+
+    private fun rotateImage(image: ImageView, angle: Int){
+        val matrix = Matrix()
+        image.scaleType= ImageView.ScaleType.MATRIX
+        matrix.postRotate(angle.toFloat(), image.getDrawable().getBounds().width()/2.toFloat(),image.getDrawable().getBounds().height()/2.toFloat())
+        image.setImageMatrix(matrix)
+    }
+
 }

@@ -28,6 +28,12 @@
     <string name="total_step"> Total Steps</string>
     <string name="average"> Average</string>
     <string name="best"> Best</string>
+    <string name="north"> North</string>
+    <string name="south"> South</string>
+    <string name="east"> East</string>
+    <string name="west"> West</string>
+
+
 
 
 </resources>

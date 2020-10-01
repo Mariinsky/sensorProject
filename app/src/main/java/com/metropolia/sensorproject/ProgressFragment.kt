@@ -20,12 +20,14 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+
 import com.metropolia.sensorproject.models.ProgressViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.alert_dialog.view.*
@@ -40,6 +42,7 @@ class ProgressFragment : Fragment() {
     private lateinit var viewModel: ProgressViewModel
     private var goal = 0
     private var count = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,6 +131,9 @@ class ProgressFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
 
+                barchart.invalidate(); // refresh
+
+
                 val entries = ArrayList<BarEntry>()
                 val days = ArrayList<String>()
                 //generate data for each bar and xaxis
@@ -186,12 +192,14 @@ class ProgressFragment : Fragment() {
                     fun getDecimalDigits(): Int {
                         return 0
                     }
+
                 }
                 with(xAxis) {
                     valueFormatter = xAxisFormatter
                     setLabelCount(7)
                 }
                 barchart.invalidate(); // refresh
+
 
             }
         viewModel.getLimitedActivities(7)
