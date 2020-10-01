@@ -6,10 +6,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,8 +26,10 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.google.android.material.textfield.TextInputEditText
 import com.metropolia.sensorproject.models.ProgressViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.alert_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_progress.*
 import kotlinx.android.synthetic.main.fragment_progress.view.*
@@ -71,49 +76,160 @@ class ProgressFragment : Fragment() {
                 .setView(mDialogView)
             //show dialog
             val mAlertDialog = mBuilder.show()
-            mDialogView.btnSave.setOnClickListener {
+
+            mDialogView.editTxtName.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (count > mDialogView.layoutEditName.counterMaxLength) {
+                        Log.d("main", "$count")
+                        mDialogView.layoutEditName.error = getString(R.string.name_input_error)
+                    }else if (count == 0){
+                        mDialogView.layoutEditName.error = getString(R.string.input_empty)
+                    } else {
+                        mDialogView.layoutEditName.error = null
+                    }
+                }
+            })
+            mDialogView.editTxtHeight.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (count == 0) {
+                        Log.d("main", "$count")
+                        mDialogView.layoutEditHeight.error = getString(R.string.input_empty)
+                    } else {
+                        mDialogView.layoutEditHeight.error = null
+                    }
+                }
+            })
+            mDialogView.editTxtWeight.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (count == 0) {
+                        Log.d("main", "$count")
+                        mDialogView.layoutEditWeight.error = getString(R.string.input_empty)
+                    } else {
+                        mDialogView.layoutEditWeight.error = null
+                    }
+                }
+            })
+            mDialogView.editTxtGoal.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (count == 0) {
+                        Log.d("main", "$count")
+                        mDialogView.layoutEditGoal.error = getString(R.string.input_empty)
+                    } else {
+                        mDialogView.layoutEditGoal.error = null
+                    }
+                }
+            })
+
+
+            mDialogView.btnSave.setOnClickListener(object : View.OnClickListener {
 
                 val newName: String = mDialogView.editTxtName.text.toString()
                 val newWeight: Int = mDialogView.editTxtWeight.text.toString().toInt()
                 val newHeight: Int = mDialogView.editTxtHeight.text.toString().toInt()
                 val newGoal: Int = mDialogView.editTxtGoal.text.toString().toInt()
-                //validate
-                /*if(newName.length >20 ){
-                    layoutName.error = getString(R.string.name_input_error)
-                } else if (newWeight.toString().length > 3 ){
-                    layoutWeight.error = getString(R.string.input_error)
-                }else if (newHeight.toString().length > 3) {
-                    layoutHeight.error = getString(R.string.input_error)
-                }else if (editName.text.toString().isEmpty()) {
-                    layoutName.error = getString(R.string.input_empty)
-                }else if (editWeight.text.toString().isEmpty()) {
-                    layoutWeight.error = getString(R.string.input_empty)
-                }else if (editHeight.text.toString().isEmpty()) {
-                    layoutHeight.error = getString(R.string.input_empty)
-                } else if (editGoal.text.toString().isEmpty()) {
-                    layoutGoal.error = getString(R.string.input_empty)
-                } else {*/
-                //save data
-                preferences =
-                    getActivity()!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
-                val editor: SharedPreferences.Editor = preferences.edit()
-                editor.putString("NAME", newName)
-                editor.putInt("WEIGHT", newWeight)
-                editor.putInt("HEIGHT", newHeight)
-                editor.putInt("GOAL", newGoal)
-                editor.commit()
 
-                val intent = Intent(activity, StepTrackerActivity::class.java)
-                intent.putExtra("TabNumber", "1");
-                startActivity(intent)
+                private fun validate(): Boolean {
+                    if (mDialogView.editTxtName.text.toString().isEmpty()) {
+                        mDialogView.layoutEditName.error = getString(R.string.input_empty)
+                        return false
+                    } else if (mDialogView.editTxtWeight.text.toString().isEmpty()) {
+                        mDialogView.layoutEditWeight.error = getString(R.string.input_empty)
+                        return false
+                    } else if (mDialogView.editTxtHeight.text.toString().isEmpty()) {
+                        mDialogView.layoutEditHeight.error = getString(R.string.input_empty)
+                        return false
+                    } else if (mDialogView.editTxtGoal.text.toString().isEmpty()) {
+                        mDialogView.layoutEditGoal.error = getString(R.string.input_empty)
+                        return false
+                    } else if (mDialogView.editTxtName.text.toString().length > 20) {
+                        mDialogView.layoutEditName.error = getString(R.string.name_input_error)
+                        return false
+                    } else if (mDialogView.editTxtWeight.text.toString().length > 3) {
+                        mDialogView.layoutEditWeight.error = getString(R.string.input_error)
+                        return false
+                    } else if (mDialogView.editTxtHeight.text.toString().length > 3) {
+                        mDialogView.layoutEditHeight.error = getString(R.string.input_error)
+                        return false
+                    }
+                    return true
+                }
 
-            }
+                private fun saveData() {
+                    val name: String = mDialogView.editTxtName.text.toString()
+                    val weight: Int = mDialogView.editTxtWeight.text.toString().toInt()
+                    val height: Int = mDialogView.editTxtHeight.text.toString().toInt()
+                    val goal: Int = mDialogView.editTxtGoal.text.toString().toInt()
+                    //save data
+                    val editor: SharedPreferences.Editor = preferences.edit()
+                    editor.putString("NAME", name)
+                    editor.putInt("WEIGHT", weight)
+                    editor.putInt("HEIGHT", height)
+                    editor.putInt("GOAL", goal)
+                    editor.putBoolean("CHECKBOX", true)
+                    editor.apply()
+
+                    val intent = Intent(activity, StepTrackerActivity::class.java)
+                    startActivity(intent)
+                }
+
+
+                override fun onClick(p0: View?) {
+                    when (p0?.id) {
+                        R.id.btnSave -> {
+                            if (validate()) {
+                                saveData()
+                            }
+                        }
+                    }
+                }
+            })
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
             }
         }
         return rootView
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
@@ -179,5 +295,6 @@ class ProgressFragment : Fragment() {
                 }
             }
         viewModel.getLimitedActivities(7)
+
     }
 }

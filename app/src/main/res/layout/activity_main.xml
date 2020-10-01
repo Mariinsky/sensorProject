@@ -159,13 +159,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_human_footprints" />
 
-    <ProgressBar
-        android:id="@+id/loading"
-        android:elevation="10dp"
-        android:background="@color/lightPink"
+    <ImageView
+        android:id="@+id/gif"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="100dp"
-        />
+        android:background="@color/white"
+        android:translationZ="90dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.metropolia.sensorproject
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.metropolia.sensorproject.services.DataStreams
 import com.metropolia.sensorproject.services.DayDescription
+import com.metropolia.sensorproject.services.LocationService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.fragment_weather.*
@@ -19,11 +21,12 @@ import java.net.URL
 
 
 class WeatherFragment : Fragment() {
-    private lateinit var dayList : List<DayDescription>
+    private var dayList = ArrayList<DayDescription>()
     private lateinit var dayAdapter: CustomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -57,14 +60,16 @@ class WeatherFragment : Fragment() {
                 rotateImage(pointer,weather.current.wind_deg)
 
                 //recycler view for 7 days forecast
-                /*dayAdapter = CustomAdapter(dayList)
+                weather.daily.forEach {dayList.add(it)}
+                dayAdapter = CustomAdapter(dayList)
                 val mLayoutManager = LinearLayoutManager(activity)
                 mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
                 lv_weather.layoutManager = mLayoutManager
                 lv_weather.adapter = dayAdapter
-                dayList = weather.daily*/
+                Log.d("weather", "$dayList")
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
+
             }
         DataStreams.getWeather()
     }

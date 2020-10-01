@@ -11,7 +11,7 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.metropolia.sensorproject.services.DayDescription
 
-class CustomAdapter(private var list: List<DayDescription>) : RecyclerView.Adapter<CustomAdapter.MyViewHolder>() {
+class CustomAdapter(private var list: ArrayList<DayDescription>) : RecyclerView.Adapter<CustomAdapter.MyViewHolder>() {
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var date: TextView = view.findViewById(R.id.date)
         var temp: TextView = view.findViewById(R.id.temp)

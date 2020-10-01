@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
@@ -26,6 +27,8 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.gif
+import kotlinx.android.synthetic.main.fragment_weather.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -47,6 +50,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Glide.with(this)
+            .load(R.drawable.giphy)
+            .into(gif)
         locationService = LocationService(this)
         sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
@@ -70,7 +76,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     startActivity(intent)
                     finish()
                 } else {
-                    loading.visibility = View.GONE
+                    gif.visibility = View.GONE
                 }
             }
 
