@@ -20,9 +20,12 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.metropolia.sensorproject.models.ProgressViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.alert_dialog.view.*
@@ -36,6 +39,7 @@ class ProgressFragment : Fragment() {
     lateinit var preferences: SharedPreferences
     private lateinit var viewModel: ProgressViewModel
     private var goal = 0
+    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,15 +127,12 @@ class ProgressFragment : Fragment() {
             .limitedActivitiesSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                barchart.invalidate(); // refresh
 
                 val entries = ArrayList<BarEntry>()
                 val days = ArrayList<String>()
                 //generate data for each bar and xaxis
                 it.forEach { day ->
                     entries.add(BarEntry(entries.size.toFloat(), day.Steps.toFloat()))
-                }
-                it.forEach { day ->
                     days.add(SimpleDateFormat("MM-dd", Locale.ENGLISH).format(day.date))
                 }
 
@@ -156,10 +157,23 @@ class ProgressFragment : Fragment() {
                 barchart.data = data
 
                 barchart.setBackgroundColor(getResources().getColor(R.color.lightPink))
-                barchart.animateY(500, EaseOutBack);
-                barchart.setFitBars(true); // make the x-axis fit exactly all bars
-                barchart.animateY(5000)
+                barchart.setFitBars(true) // make the x-axis fit exactly all bars
 
+                if(count == 0) {
+                    count++
+                    barchart.animateY(500)
+                }
+
+                // add listener
+                barchart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
+                    override fun onNothingSelected() {
+                    }
+
+                    override fun onValueSelected(e: Entry?, h: Highlight?) {
+                        txtDetail.setText(e!!.y.toString() +" steps")
+                    }
+
+                })
                 //customize xAxis
                 val xAxis = barchart.getXAxis()
                 xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
@@ -177,6 +191,8 @@ class ProgressFragment : Fragment() {
                     valueFormatter = xAxisFormatter
                     setLabelCount(7)
                 }
+                barchart.invalidate(); // refresh
+
             }
         viewModel.getLimitedActivities(7)
     }
