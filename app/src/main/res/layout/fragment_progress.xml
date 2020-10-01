@@ -14,7 +14,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="-35dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -135,15 +137,23 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="451dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="80dp">
+                android:layout_marginBottom="30dp">
 
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/barchart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/txtDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginStart="50dp"
+                android:textSize="30sp" />
 
         </LinearLayout>
 
