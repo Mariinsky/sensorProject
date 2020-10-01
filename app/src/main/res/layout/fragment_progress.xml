@@ -57,6 +57,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/week_total_steps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/initial_step"
@@ -93,6 +94,7 @@
                             android:textSize="15sp" />
 
                         <TextView
+                            android:id="@+id/average_steps"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/initial_step"
@@ -121,6 +123,7 @@
                             android:textSize="15sp" />
 
                         <TextView
+                            android:id="@+id/best_result_day"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/initial_step"

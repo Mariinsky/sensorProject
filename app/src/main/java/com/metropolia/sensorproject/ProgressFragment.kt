@@ -4,49 +4,47 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
+
 import android.os.Bundle
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
+
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.github.mikephil.charting.animation.Easing.EaseOutBack
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-
+import com.metropolia.sensorproject.database.DayActivity
 import com.metropolia.sensorproject.models.ProgressViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.alert_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_progress.*
 import kotlinx.android.synthetic.main.fragment_progress.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ProgressFragment : Fragment() {
     lateinit var preferences: SharedPreferences
     private lateinit var viewModel: ProgressViewModel
+    private val barChartValueTapped = PublishSubject.create<DayActivity>()
+    private val unsubscribeOnDestroy = CompositeDisposable()
     private var goal = 0
-    private var count = 0
+    private var shouldAnimate = true
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -102,13 +100,13 @@ class ProgressFragment : Fragment() {
                 } else {*/
                 //save data
                 preferences =
-                    getActivity()!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+                    activity!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
                 val editor: SharedPreferences.Editor = preferences.edit()
                 editor.putString("NAME", newName)
                 editor.putInt("WEIGHT", newWeight)
                 editor.putInt("HEIGHT", newHeight)
                 editor.putInt("GOAL", newGoal)
-                editor.commit()
+                editor.apply()
 
                 val intent = Intent(activity, StepTrackerActivity::class.java)
                 intent.putExtra("TabNumber", "1");
@@ -122,86 +120,84 @@ class ProgressFragment : Fragment() {
         return rootView
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
 
         viewModel
             .limitedActivitiesSubject
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-
-                barchart.invalidate(); // refresh
-
-
-                val entries = ArrayList<BarEntry>()
-                val days = ArrayList<String>()
-                //generate data for each bar and xaxis
-                it.forEach { day ->
-                    entries.add(BarEntry(entries.size.toFloat(), day.Steps.toFloat()))
-                    days.add(SimpleDateFormat("MM-dd", Locale.ENGLISH).format(day.date))
-                }
-
-                val barDataSet = BarDataSet(entries, "Steps")
-                barDataSet.setColor(getResources().getColor(R.color.darkPink))
-
-                val dataSets = ArrayList<IBarDataSet>()
-                dataSets.add(barDataSet)
-
-                //set description
-                val description = Description()
-                description.setText("")
-                barchart.description = description
-
-                val data = BarData(barDataSet)
-                data.setBarWidth(0.9f)
-
-                //no data display
-                barchart.setNoDataText("No data")
-
-                //generate data for chart
-                barchart.data = data
-
-                barchart.setBackgroundColor(getResources().getColor(R.color.lightPink))
-                barchart.setFitBars(true) // make the x-axis fit exactly all bars
-
-                if(count == 0) {
-                    count++
-                    barchart.animateY(500)
-                }
-
-                // add listener
-                barchart.setOnChartValueSelectedListener(object: OnChartValueSelectedListener{
-                    override fun onNothingSelected() {
-                    }
-
-                    override fun onValueSelected(e: Entry?, h: Highlight?) {
-                        txtDetail.setText(e!!.y.toString() +" steps")
-                    }
-
-                })
-                //customize xAxis
-                val xAxis = barchart.getXAxis()
-                xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                val xAxisFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String? {
-                        return days.get(value.toInt())
-                    }
-
-                    fun getDecimalDigits(): Int {
-                        return 0
-                    }
-
-                }
-                with(xAxis) {
-                    valueFormatter = xAxisFormatter
-                    setLabelCount(7)
-                }
-                barchart.invalidate(); // refresh
-
-
+            .subscribe { (steps, activities) ->
+                setupBarChart(activities)
+                setupWeekStatistic(steps)
             }
+
+        barChartValueTapped
+            .subscribe {
+                txtDetail.text = it.Steps.toString()
+            }.addTo(unsubscribeOnDestroy)
+
+
         viewModel.getLimitedActivities(7)
+    }
+
+    private fun setupWeekStatistic(steps: MutableList<Int>) {
+        week_total_steps.text = steps.sum().toString()
+        average_steps.text = steps.average().toInt().toString()
+        best_result_day.text = steps.maxOrNull().toString()
+    }
+
+    private fun setupBarChart(activityData: List<DayActivity>) {
+        val entries = ArrayList<BarEntry>()
+        val days = ArrayList<String>()
+        //generate data for each bar and xaxis
+        activityData.forEach { day ->
+            entries.add(BarEntry(entries.size.toFloat(), day.Steps.toFloat()))
+            days.add(SimpleDateFormat("MM-dd", Locale.ENGLISH).format(day.date))
+        }
+
+        val barDataSet = BarDataSet(entries, "Steps")
+        barDataSet.color = resources.getColor(R.color.darkPink)
+        val dataSets = ArrayList<IBarDataSet>()
+        dataSets.add(barDataSet)
+        //set description
+        val description = Description()
+        description.text = ""
+        barchart.description = description
+        val data = BarData(barDataSet)
+        data.barWidth = 0.9f
+        //no data display
+        barchart.setNoDataText("No data")
+        //generate data for chart
+        barchart.data = data
+        barchart.setBackgroundColor(resources.getColor(R.color.lightPink))
+        barchart.setFitBars(true) // make the x-axis fit exactly all bars
+        if (shouldAnimate) {
+            shouldAnimate = false
+            barchart.animateY(500)
+        }
+        // add listener
+        barchart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onNothingSelected() {}
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                if (e != null) {
+                    barChartValueTapped.onNext(activityData[e.x.toInt()])
+                }
+            }
+        })
+        //customize xAxis
+        val xAxis = barchart.xAxis
+        xAxis.granularity = 1f; // minimum axis-step (interval) is 1
+        xAxis.position = XAxis.XAxisPosition.BOTTOM;
+        val xAxisFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String? {
+                return days.get(value.toInt())
+            }
+            fun getDecimalDigits(): Int { return 0 }
+        }
+        with(xAxis) {
+            valueFormatter = xAxisFormatter
+            labelCount = 7
+        }
+        barchart.invalidate(); // refresh
     }
 }
