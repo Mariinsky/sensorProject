@@ -128,8 +128,10 @@ class LocationService(private val context: Context): LocationListener {
     @SuppressLint("MissingPermission")
     fun getLocation() {
          locationClient.lastLocation.addOnSuccessListener {
-                DataStreams.locationSubject.onNext(it)
-             Log.i("XXX", it.longitude.toString() + " " + it.latitude.toString())
+             if(it != null) {
+                 DataStreams.locationSubject.onNext(it)
+                 Log.i("XXX", it.longitude.toString() + " " + it.latitude.toString())
+             }
          }
     }
 }

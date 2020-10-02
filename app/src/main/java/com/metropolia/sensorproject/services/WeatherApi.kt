@@ -22,7 +22,7 @@ class WeatherApi() {
         .build()
 
     interface Service {
-        @GET("onecall?units=metric&exclude=minutely,hourly,daily,alerts")
+        @GET("onecall?units=metric&exclude=minutely,hourly,alerts")
         fun fetchWeather(
             @Query("lat") lat: Double,
             @Query("lon") lon: Double,
@@ -82,7 +82,10 @@ data class WeatherDescription (
 data class DayDescription (
     val temp: Temp,
     val weather: List<WeatherDescription>
-)
+){
+    val dayTemp: String
+        get() { return "${temp.day} °C"}
+}
 
 data class Temp (
     val day: Float,

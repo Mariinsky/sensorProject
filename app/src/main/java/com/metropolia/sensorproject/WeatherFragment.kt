@@ -26,13 +26,23 @@ import java.util.concurrent.TimeUnit
 
 
 class WeatherFragment : Fragment() {
+    companion object {
+        fun newInstance(): WeatherFragment = WeatherFragment()
+    }
+
     private var dayList = ArrayList<DayDescription>()
     private lateinit var dayAdapter: CustomAdapter
+    private var added: Boolean = false
 
     private val disposeOnDestroy = CompositeDisposable()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+   override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) =
         inflater.inflate(R.layout.fragment_weather, container, false)!!
+
 
     override fun onResume() {
         super.onResume()
@@ -54,30 +64,53 @@ class WeatherFragment : Fragment() {
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
                 //recycler view for 7 days forecast
-             /* weather.daily.forEach {dayList.add(it)}
-              dayAdapter = CustomAdapter(dayList)
-              val mLayoutManager = LinearLayoutManager(activity)
-              mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-              lv_weather.layoutManager = mLayoutManager
-              lv_weather.adapter = dayAdapter
-              Log.d("weather", "$dayList")*/
-              //loading disappears after data loaded
-              gif.visibility = View.GONE
+                dayList.clear()
+                weather.daily.forEach { dayList.add(it) }
+                dayAdapter = CustomAdapter(dayList)
+                val mLayoutManager = LinearLayoutManager(activity)
+                mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+                lv_weather.layoutManager = mLayoutManager
+                lv_weather.adapter = dayAdapter
+                Log.d("weather", "$dayList")
+
+                //loading disappears after data loaded
+                gif.visibility = View.GONE
             }
             .addTo(disposeOnDestroy)
-     DataStreams.getWeather()
+        DataStreams.getWeather()
     }
 
     private fun degToCompass(num: Int): String {
         val degree = num / 22.5 + 0.5
-        val arr = arrayOf("N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW")
+        val arr = arrayOf(
+            "N",
+            "NNE",
+            "NE",
+            "ENE",
+            "E",
+            "ESE",
+            "SE",
+            "SSE",
+            "S",
+            "SSW",
+            "SW",
+            "WSW",
+            "W",
+            "WNW",
+            "NW",
+            "NNW"
+        )
         return arr[(degree % 16).toInt()]
     }
 
-    private fun rotateImage(image: ImageView, angle: Int){
+    private fun rotateImage(image: ImageView, angle: Int) {
         val matrix = Matrix()
-        image.scaleType= ImageView.ScaleType.MATRIX
-        matrix.postRotate(angle.toFloat(), image.drawable.bounds.width()/2.toFloat(),image.drawable.bounds.height()/2.toFloat())
+        image.scaleType = ImageView.ScaleType.MATRIX
+        matrix.postRotate(
+            angle.toFloat(),
+            image.drawable.bounds.width() / 2.toFloat(),
+            image.drawable.bounds.height() / 2.toFloat()
+        )
         image.imageMatrix = matrix
     }
 
@@ -90,7 +123,7 @@ class WeatherFragment : Fragment() {
         val direction = degToCompass(weather.windDirection)
         txtDirection.text = direction
         weather_icon.setImageBitmap(icon)
-        rotateImage(pointer,weather.windDirection)
+        rotateImage(pointer, weather.windDirection)
     }
 
     override fun onDestroy() {

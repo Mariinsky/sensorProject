@@ -28,8 +28,17 @@
             android:paddingBottom="50dp">
 
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/lv_weather"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <LinearLayout
-                android:id="@+id/linearLayout3"
+                android:id="@+id/tem_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -39,7 +48,7 @@
                 android:weightSum="2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/lv_weather">
 
                 <LinearLayout
                     android:id="@+id/temperatureBox"
@@ -88,8 +97,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
-                        android:text="sunny"
-                        android:textSize="30sp" />
+                        android:text=""
+                        android:textSize="20sp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -154,18 +163,19 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/imageView6"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginBottom="160dp"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout5"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout5"
+                app:layout_constraintBottom_toBottomOf="@+id/wind_direction"
+                app:layout_constraintEnd_toStartOf="@+id/wind_direction"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+                app:layout_constraintStart_toEndOf="@+id/wind_direction"
                 app:srcCompat="@drawable/ic_anemometer"
                 app:tint="@color/darkPink" />
 
             <LinearLayout
-                android:id="@+id/linearLayout5"
+                android:id="@+id/wind_direction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
@@ -175,7 +185,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+                app:layout_constraintTop_toBottomOf="@+id/tem_detail">
 
                 <TextView
                     android:id="@+id/textView2"
@@ -231,6 +241,7 @@
                     android:textSize="12sp"
                     tools:layout_editor_absoluteX="194dp"
                     tools:layout_editor_absoluteY="640dp" />
+
             </LinearLayout>
 
 
