@@ -40,14 +40,35 @@ data class Weather(
     val timezone: String,
     val current: Current,
     val daily: List<DayDescription>
-)
+) {
+    val curentTemp: String
+        get() { return "${current.temp} °C"}
+
+    val feelsLike: String
+        get() { return "Feels like ${current.feels_like} °C"}
+
+    val windSpeed: String
+        get() { return "${current.wind_speed} m/s"}
+
+    val windDirection: Int
+        get() { return current.wind_deg + 180}
+
+    val humidity: String
+        get() { return "${current.humidity} %"}
+
+    val description: String
+        get() { return current.weather[0].description  }
+
+    val icon: String
+        get() { return "https://openweathermap.org/img/wn/${current.weather[0].icon}@4x.png"}
+}
 
 data class Current (
     val temp: Float,
     val feels_like: Float,
     val pressure: Int,
     val humidity: Int,
-    val win_speed: Int,
+    val wind_speed: Float,
     val wind_deg: Int,
     val weather: List<WeatherDescription>
 )

@@ -18,7 +18,7 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
     private val getLimitedActivities: PublishSubject<Int> = PublishSubject.create()
 
     val allActivitiesSubject: PublishSubject<List<DayActivity>> = PublishSubject.create()
-    val limitedActivitiesSubject: PublishSubject<List<DayActivity>> = PublishSubject.create()
+    val limitedActivitiesSubject: PublishSubject<Pair<MutableList<Int>, List<DayActivity>>> = PublishSubject.create()
 
     val context = getApplication<Application>().applicationContext
     val emitStepsCount: PublishSubject<Int> = PublishSubject.create()
@@ -46,7 +46,11 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
             .observeOn(io())
             .subscribe {
                 val query = db.activityDao().getLimitedActivities(it)
-                limitedActivitiesSubject.onNext(query)
+                val steps = mutableListOf<Int>()
+                query.forEach { day ->
+                    steps.add(day.Steps)
+                }
+                limitedActivitiesSubject.onNext(Pair(steps, query))
             }
 
     }

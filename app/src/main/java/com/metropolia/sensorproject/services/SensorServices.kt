@@ -36,7 +36,7 @@ object DataStreams {
             .withLatestFrom(locationSubject)
             .observeOn(io())
             .flatMap { (_, location) ->
-                api.fetchWeather(location.longitude, location.latitude, WEATHER_API_KEY)
+                api.fetchWeather(location.latitude, location.longitude, WEATHER_API_KEY)
             }
             .subscribe {
                 weatherSubject.onNext(it)
@@ -129,6 +129,7 @@ class LocationService(private val context: Context): LocationListener {
     fun getLocation() {
          locationClient.lastLocation.addOnSuccessListener {
                 DataStreams.locationSubject.onNext(it)
+             Log.i("XXX", it.longitude.toString() + " " + it.latitude.toString())
          }
     }
 }

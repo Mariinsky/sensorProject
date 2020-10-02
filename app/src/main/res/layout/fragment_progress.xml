@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".ProgressFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,10 +31,7 @@
                     android:id="@+id/top"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:gravity="center_vertical">
 
                     <LinearLayout
                         android:id="@+id/total_step"
@@ -44,9 +40,7 @@
                         android:layout_marginStart="50dp"
                         android:layout_marginEnd="50dp"
                         android:orientation="vertical"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent">
-
+                       >
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -61,6 +55,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/week_total_steps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/initial_step"
@@ -97,6 +92,7 @@
                             android:textSize="15sp" />
 
                         <TextView
+                            android:id="@+id/average_steps"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/initial_step"
@@ -125,6 +121,8 @@
                             android:textSize="15sp" />
 
                         <TextView
+
+                            android:id="@+id/best_result_day"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/initial_step"
@@ -133,21 +131,24 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="80dp">
-
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/barchart"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:minHeight="300dp"
+                    android:layout_marginTop="20dp"
+                    />
 
+            <TextView
+                android:id="@+id/txtDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                tools:text=""
+                android:layout_marginTop="20dp"
+                android:textAlignment="center"/>
         </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button"
@@ -161,5 +162,4 @@
         app:elevation="6dp"
         app:rippleColor="@color/lightPink"
         app:srcCompat="@drawable/ic_baseline_settings_24" />
-
 </FrameLayout>

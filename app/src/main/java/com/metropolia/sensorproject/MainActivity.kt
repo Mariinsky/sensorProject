@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     startActivity(intent)
                     finish()
                 } else {
-                    gif.visibility = View.GONE
+                    initial.visibility = View.GONE
                 }
             }
 
