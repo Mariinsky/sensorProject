@@ -65,7 +65,7 @@ class TodayFragment : Fragment() {
                     .addTag("step")
                     .build()
                 workManager.enqueue(stepWorker)
-                //locationService.getLocation()
+                locationService.getLocation()
                 start = true
                 btnStart.text = getString(R.string.stop_button)
             } else {

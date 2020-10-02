@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 checkDateAndStart()
-                //locationService.getLocation()
+                locationService.getLocation()
             }
 
         appReadySubject
