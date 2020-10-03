@@ -55,7 +55,7 @@ class ProgressFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         // retrieve data
-        preferences = activity!!.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+        preferences = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         goal = preferences.getInt("GOAL", 0)
         val name = preferences.getString("NAME", "")
         val height = preferences.getInt("HEIGHT", 0)
@@ -234,7 +234,7 @@ class ProgressFragment : Fragment() {
             .limitedActivitiesSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { (steps, activities) ->
-                setupBarChart(activities)
+                if (activities.isNotEmpty()) { setupBarChart(activities) }
                 setupWeekStatistic(steps)
             }
 
@@ -249,7 +249,7 @@ class ProgressFragment : Fragment() {
     private fun setupWeekStatistic(steps: MutableList<Int>) {
         week_total_steps.text = steps.sum().toString()
         average_steps.text = steps.average().toInt().toString()
-        best_result_day.text = steps.maxOrNull().toString()
+        best_result_day.text = steps.maxOrNull()?.toString() ?: "0"
     }
 
     private fun setupBarChart(activityData: List<DayActivity>) {

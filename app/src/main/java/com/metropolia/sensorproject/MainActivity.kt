@@ -13,22 +13,18 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
-import com.metropolia.sensorproject.services.DataStreams
 import com.metropolia.sensorproject.services.LocationService
 import com.metropolia.sensorproject.utils.compareDate
-import com.metropolia.sensorproject.workmanager.FILE_STEPS
-import com.metropolia.sensorproject.workmanager.ZERO_STEPS
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.gif
-import kotlinx.android.synthetic.main.fragment_weather.*
+import org.osmdroid.config.Configuration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -44,11 +40,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACTIVITY_RECOGNITION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
 
     var isLogedIn = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val ctx = applicationContext
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(R.layout.activity_main)
         Glide.with(this)
             .load(R.drawable.giphy)
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .delay(1, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                DataStreams.updateStepCount(it)
+                StepApp.updateStepCount(it)
                 if(isLogedIn){
                     val intent = Intent(this, StepTrackerActivity::class.java)
                     startActivity(intent)
@@ -105,8 +104,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(p0: View?) {
         when(p0?.id){
-            R.id.btnSave-> {
-                if(validate()){
+            R.id.btnSave -> {
+                if (validate()) {
                     saveData()
                 }
             }
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count > layoutEditName.counterMaxLength) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditName.error = getString(R.string.name_input_error)
                 } else {
                     layoutEditName.error = null
@@ -135,7 +134,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditHeight.error = getString(R.string.input_empty)
                 } else {
                     layoutEditHeight.error = null
@@ -149,7 +148,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditWeight.error = getString(R.string.input_empty)
                 } else {
                     layoutEditWeight.error = null
@@ -163,7 +162,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditGoal.error = getString(R.string.input_empty)
                 } else {
                     layoutEditGoal.error = null
@@ -201,6 +200,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             && ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(this, permissions, REQUEST_ALL_NEEDED_PERMISSIONS)
@@ -256,7 +259,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .just { db.activityDao().getLimitedActivities(1) }
             .observeOn(io())
             .map { it() }
-            .subscribe {
+            .map {
                 if (!it.isNullOrEmpty()) {
                     if(!compareDate(it.first().date)) {
                         db.activityDao().insert(DayActivity(Date(), readStepFromFile()))
@@ -270,6 +273,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     appReadySubject.onNext(ZERO_STEPS)
                 }
+            }
+            .subscribe {
+
             }
     }
 
