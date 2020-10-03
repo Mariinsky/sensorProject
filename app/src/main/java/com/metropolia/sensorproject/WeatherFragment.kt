@@ -63,15 +63,7 @@ class WeatherFragment : Fragment() {
 
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
-                //recycler view for 7 days forecast
-                dayList.clear()
-                weather.daily.forEach { dayList.add(it) }
-                dayAdapter = CustomAdapter(dayList)
-                val mLayoutManager = LinearLayoutManager(activity)
-                mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-                lv_weather.layoutManager = mLayoutManager
-                lv_weather.adapter = dayAdapter
-                Log.d("weather", "$dayList")
+                recyclerViewSetUp(weather)
 
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
@@ -80,6 +72,20 @@ class WeatherFragment : Fragment() {
         DataStreams.getWeather()
     }
 
+
+    //recycler view for 8 days forecast
+    private fun recyclerViewSetUp(weather: Weather) {
+        dayList.clear()
+        weather.daily.forEach { dayList.add(it) }
+        dayAdapter = CustomAdapter(dayList)
+        val mLayoutManager = LinearLayoutManager(activity)
+        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        lv_weather.layoutManager = mLayoutManager
+        lv_weather.adapter = dayAdapter
+        Log.d("weather", "$dayList")
+    }
+
+    //define direction from angle
     private fun degToCompass(num: Int): String {
         val degree = num / 22.5 + 0.5
         val arr = arrayOf(
@@ -103,6 +109,7 @@ class WeatherFragment : Fragment() {
         return arr[(degree % 16).toInt()]
     }
 
+    //rotate arrow according to wind degree
     private fun rotateImage(image: ImageView, angle: Int) {
         val matrix = Matrix()
         image.scaleType = ImageView.ScaleType.MATRIX
@@ -113,6 +120,7 @@ class WeatherFragment : Fragment() {
         )
         image.imageMatrix = matrix
     }
+
 
     private fun setupWeatherViews(weather: Weather, icon: Bitmap) {
         txtTemp.text = weather.curentTemp

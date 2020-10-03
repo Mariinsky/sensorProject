@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:innerRadiusRatio= "2.5"
+    android:innerRadius= "0dp"
     android:shape= "ring"
-    android:thickness= "1dp"
+    android:thickness= "85dp"
     android:useLevel= "false" >
-    <solid android:color= "@color/darkPink" />
+    <gradient
+        android:endColor="@color/pink"
+        android:startColor="@color/lightPink"
+        android:type="radial"
+        android:gradientRadius="300dp"/>
 </shape>
+
