@@ -22,7 +22,7 @@ class WeatherApi() {
         .build()
 
     interface Service {
-        @GET("onecall?units=metric&exclude=minutely,hourly,daily,alerts")
+        @GET("onecall?units=metric&exclude=minutely,hourly,alerts")
         fun fetchWeather(
             @Query("lat") lat: Double,
             @Query("lon") lon: Double,
@@ -38,7 +38,8 @@ data class Weather(
     val lat: Float,
     val lon: Float,
     val timezone: String,
-    val current: Current
+    val current: Current,
+    val daily: List<DayDescription>
 ) {
     val curentTemp: String
         get() { return "${current.temp} °C"}
@@ -76,4 +77,17 @@ data class WeatherDescription (
     val main: String,
     val description: String,
     val icon: String
+)
+
+data class DayDescription (
+    val temp: Temp,
+    val weather: List<WeatherDescription>
+){
+    val dayTemp: String
+        get() { return "${temp.day} °C"}
+}
+
+data class Temp (
+    val day: Float,
+    val night: Float
 )

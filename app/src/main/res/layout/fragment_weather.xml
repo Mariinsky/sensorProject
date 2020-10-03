@@ -27,39 +27,44 @@
             android:orientation="vertical"
             android:paddingBottom="50dp">
 
-            <ImageView
-                android:id="@+id/weather_icon"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="20dp"
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/lv_weather"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/linearLayout3"
+                android:id="@+id/tem_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/custom_border"
                 android:weightSum="2"
+                app:layout_constraintBottom_toTopOf="@+id/imageView6"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/weather_icon">
+                app:layout_constraintTop_toBottomOf="@+id/lv_weather">
 
                 <LinearLayout
                     android:id="@+id/temperatureBox"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/rectangular"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/txtTemp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:text="@string/initial_step"
                         android:textColor="@color/dark"
                         android:textSize="40sp" />
@@ -68,15 +73,17 @@
                         android:id="@+id/txtFeel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:text="@string/initial_step"
                         android:textSize="20sp" />
 
+                    <ImageView
+                        android:id="@+id/weather_icon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_horizontal" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/darkPink" />
 
                 <LinearLayout
                     android:layout_width="100dp"
@@ -91,8 +98,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
-                        android:text="sunny"
-                        android:textSize="30sp" />
+                        android:text=""
+                        android:textSize="20sp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -157,28 +164,30 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/imageView6"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginBottom="160dp"
-                app:layout_constraintBottom_toBottomOf="@+id/linearLayout5"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout5"
+                app:layout_constraintBottom_toBottomOf="@+id/wind_direction"
+                app:layout_constraintEnd_toStartOf="@+id/wind_direction"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/linearLayout5"
+                app:layout_constraintStart_toEndOf="@+id/wind_direction"
                 app:srcCompat="@drawable/ic_anemometer"
-                app:tint="@color/darkPink" />
+                app:tint="@color/darkPink"
+                android:translationZ="90dp"/>
 
             <LinearLayout
-                android:id="@+id/linearLayout5"
+                android:id="@+id/wind_direction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="80dp"
                 android:background="@drawable/circular_line_shape"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+                app:layout_constraintTop_toBottomOf="@+id/tem_detail">
 
                 <TextView
                     android:id="@+id/textView2"
@@ -188,6 +197,7 @@
                     android:layout_marginBottom="30dp"
                     android:text="@string/north"
                     android:textSize="12sp"
+                    android:textColor="@color/dark"
                     tools:layout_editor_absoluteX="178dp"
                     tools:layout_editor_absoluteY="507dp" />
 
@@ -202,6 +212,7 @@
                         android:layout_marginStart="25dp"
                         android:layout_marginEnd="30dp"
                         android:text="@string/west"
+                        android:textColor="@color/dark"
                         android:textSize="12sp"
                         tools:layout_editor_absoluteX="88dp"
                         tools:layout_editor_absoluteY="577dp" />
@@ -220,6 +231,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginEnd="25dp"
                         android:text="@string/east"
+                        android:textColor="@color/dark"
                         android:textSize="12sp"
                         tools:layout_editor_absoluteX="268dp"
                         tools:layout_editor_absoluteY="568dp" />
@@ -232,14 +244,14 @@
                     android:layout_marginBottom="20dp"
                     android:text="@string/south"
                     android:textSize="12sp"
+                    android:textColor="@color/dark"
                     tools:layout_editor_absoluteX="194dp"
                     tools:layout_editor_absoluteY="640dp" />
-            </LinearLayout>
 
+            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
-
 </FrameLayout>
