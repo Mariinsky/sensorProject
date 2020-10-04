@@ -2,6 +2,7 @@ package com.metropolia.sensorproject.models
 
 import android.app.Application
 import android.content.Context
+import android.hardware.SensorManager
 import android.location.Location
 
 import android.util.Log
@@ -13,12 +14,15 @@ import com.metropolia.sensorproject.StepApp
 
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
+import com.metropolia.sensorproject.services.LocationService
+import com.metropolia.sensorproject.services.StepSensorService
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.ReplaySubject
 import org.osmdroid.util.GeoPoint
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -28,45 +32,59 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
     private val getAllActivities: PublishSubject<Unit> = PublishSubject.create()
     private val insertNewActivity: PublishSubject<DayActivity> = PublishSubject.create()
     private val getLimitedActivities: PublishSubject<Int> = PublishSubject.create()
-    private val route = mutableListOf<GeoPoint>()
+    private val locationService = LocationService(application)
+    private val stepSensor = StepSensorService(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
 
-    private var stepWriter: Disposable? = null
+    private var valuesWriter: Disposable? = null
 
     val allActivitiesSubject: PublishSubject<List<DayActivity>> = PublishSubject.create()
     val limitedActivitiesSubject: PublishSubject<Pair<MutableList<Int>, List<DayActivity>>> = PublishSubject.create()
 
     val context = getApplication<Application>().applicationContext
     val emitStepsCount: PublishSubject<Int> = PublishSubject.create()
-    val strtingLocationSubject: ReplaySubject<Location> = ReplaySubject.create()
-    val routeLocationSubject: PublishSubject<MutableList<GeoPoint>> = PublishSubject.create()
-    var stepCount = StepApp.getStepCount()
+    val startingLocationSubject: ReplaySubject<Location> = ReplaySubject.create()
+
+    val locationServiceSubject: PublishSubject<Pair<String, MutableList<GeoPoint>>> = PublishSubject.create()
+    val startServices = PublishSubject.create<Unit>()
+    val stopServices = PublishSubject.create<Unit>()
+
+
+    val gson = Gson()
 
     init {
         StepApp
-            .stepCountSubject
+            .stepStream
             .subscribe {
-                stepCount = it
                 emitStepsCount.onNext(it)
             }
 
         StepApp
-            .locationSubject
-            .observeOn(io())
-            .subscribe {
-                // Use this for testing and generating random route.
-                // val geoPoint = GeoPoint(it.latitude + Random.nextFloat(), it.longitude - Random.nextFloat())
-                val geoPoint = GeoPoint(it.latitude, it.longitude)
-                route.add(geoPoint)
-                routeLocationSubject.onNext(route)
+            .locationServiceStream
+            .subscribe {(distance, route) ->
+                locationServiceSubject.onNext(Pair(distance, route))
             }
+
+        startServices
+            .subscribe {
+                locationService.startGettingLocation()
+                stepSensor.registerListener()
+                startStepWriter()
+            }
+
+        stopServices
+            .subscribe {
+                locationService.stopLocationService()
+                stepSensor.unregisterListener()
+                disposeWriter()
+            }
+
 
         StepApp
-            .locationSubject
+            .locationStream
             .take(1)
             .subscribe {
-                strtingLocationSubject.onNext(it)
+                startingLocationSubject.onNext(it)
             }
-
 
         getAllActivities
             .observeOn(io())
@@ -85,7 +103,7 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
                 val query = db.activityDao().getLimitedActivities(it)
                 val steps = mutableListOf<Int>()
                 query.forEach { day ->
-                    day.Steps?.let { it1 -> steps.add(it1) }
+                     steps.add(day.Steps)
                 }
                 limitedActivitiesSubject.onNext(Pair(steps, query))
             }
@@ -105,21 +123,27 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun startStepWriter() {
-        stepWriter = Observable
+        valuesWriter = Observable
             .interval(5, TimeUnit.SECONDS)
             .timeInterval()
             .observeOn(io())
             .subscribe {
-                if (StepApp.getStepCount() != 0) {
+                val day = DayActivity(
+                    Date(),
+                    StepApp.getStepCount(),
+                    StepApp.getTimer(),
+                    StepApp.getWeather(),
+                    StepApp.getRoute(),
+                    StepApp.getDistance()
+                )
+                val json = gson.toJson(day)
                     context.openFileOutput(DAY_VALUES_FILE, Context.MODE_PRIVATE).use {
-                        Log.i("XXX", "writing steps")
-                        val json = Gson().toJson(StepApp.dayActivity)
+                        Log.i("XXX", "writing values")
                         it?.write(json.toByteArray())
                     }
-                }
             }
     }
     fun disposeWriter() {
-        stepWriter?.dispose()
+        valuesWriter?.dispose()
     }
 }

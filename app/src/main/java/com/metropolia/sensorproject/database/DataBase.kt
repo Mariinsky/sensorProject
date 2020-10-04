@@ -9,10 +9,12 @@ import java.util.*
 @Entity
 data class DayActivity (
     @PrimaryKey(autoGenerate = true)
-    var date: Date? = null,
-    var Steps: Int? = null,
-    var timer: Long? = null,
-    var weather: String? = null
+    val date: Date,
+    val Steps: Int,
+    val timer: Long,
+    val weather: String?,
+    val route: String?,
+    val distance: Float,
 )
 
 @Dao

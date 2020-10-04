@@ -32,17 +32,13 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var sharedPreferences: SharedPreferences
-    private val REQUEST_ALL_NEEDED_PERMISSIONS = 999
+
     private val db by lazy { AppDB.get(application) }
     private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
     private val appReadySubject: PublishSubject<DayActivity> = PublishSubject.create()
     private lateinit var locationService: LocationService
-    private val permissions =
-        arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACTIVITY_RECOGNITION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+    private val gson = Gson()
+
 
     var isLogedIn = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +46,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val ctx = applicationContext
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(R.layout.activity_main)
-        Glide.with(this)
+        Glide
+            .with(this)
             .load(R.drawable.giphy)
             .into(gif)
         locationService = LocationService(this)
@@ -63,14 +60,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 checkDateAndStart()
-                //locationService.getLocation()
             }
 
         appReadySubject
             .delay(1, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                StepApp.updateStepCount(it.Steps)
+                StepApp.setValues(it)
+                locationService.getLocation()
                 if(isLogedIn){
                     val intent = Intent(this, StepTrackerActivity::class.java)
                     startActivity(intent)
@@ -207,7 +204,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_ALL_NEEDED_PERMISSIONS)
+            ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_ALL_NEEDED_PERMISSIONS)
         } else {
             checkedPermissionSubject.onNext(Unit)
         }
@@ -236,7 +233,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 setPositiveButton("I understand") { _, _ ->
                     ActivityCompat.requestPermissions(
                         this@MainActivity,
-                        permissions,
+                        PERMISSIONS,
                         REQUEST_ALL_NEEDED_PERMISSIONS
                     )
                 }
@@ -246,23 +243,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun readValuesFromFile(): DayActivity {
-        return try {
-            val reader = openFileInput(DAY_VALUES_FILE)?.bufferedReader().use { it?.readText() ?: "0" }
-            Gson().fromJson(reader, DayActivity::class.java)
-        } catch (e: Exception) {
-            Log.i("XXX", "error" + e.message.toString())
-            DayActivity()
-        }
-    }
-
-    private fun readTimeFromFile(): Long {
-        return try {
-            val reader = openFileInput(TIME_FILE)?.bufferedReader().use { it?.readText() ?: "0" }
-            reader.toLong()
-        } catch (e: Exception) {
-            Log.i("XXX", "error" + e.message.toString())
-            return -1
-        }
+            val reader = openFileInput(DAY_VALUES_FILE)?.bufferedReader().use { it?.readText() }
+            return gson.fromJson(reader, DayActivity::class.java)
     }
 
     private fun checkDateAndStart() {
@@ -270,23 +252,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .just { db.activityDao().getLimitedActivities(1) }
             .observeOn(io())
             .map { it() }
-            .map {
+            .subscribe {
                 if (!it.isNullOrEmpty()) {
-                    if(!it!!.first().date?.let { it1 -> compareDate(it1) }!!) {
+                    if(!compareDate(it.first().date)) {
                         db.activityDao().insert( readValuesFromFile() )
                         this.openFileOutput(DAY_VALUES_FILE, Context.MODE_PRIVATE).use { os ->
                             os.write("".toByteArray())
                         }
-                        appReadySubject.onNext(DayActivity())
+                        appReadySubject.onNext(DayActivity(Date(), 0, 0, null, null, 0f))
                     } else {
                         appReadySubject.onNext(readValuesFromFile())
                     }
                 } else {
-                    appReadySubject.onNext(DayActivity())
+                    appReadySubject.onNext(readValuesFromFile())
                 }
-            }
-            .subscribe {
-
             }
     }
 

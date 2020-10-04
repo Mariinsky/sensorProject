@@ -47,8 +47,9 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
+
         StepApp
-            .weatherSubject
+            .weatherStream
             .take(1)
             .observeOn(io())
             .map {
@@ -64,7 +65,7 @@ class WeatherFragment : Fragment() {
                 gif.visibility = View.GONE
             }
             .addTo(disposeOnDestroy)
-        StepApp.getWeather()
+        StepApp.getCurrentWeather()
     }
 
 

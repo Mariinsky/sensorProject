@@ -17,10 +17,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.metropolia.sensorproject.StepApp
-import com.metropolia.sensorproject.WEATHER_API_KEY
-import io.reactivex.rxjava3.schedulers.Schedulers.io
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.kotlin.withLatestFrom
 import org.osmdroid.util.GeoPoint
 
 class StepSensorService(private val sensorManager: SensorManager) : SensorEventListener {
@@ -73,13 +69,10 @@ class LocationService(private val context: Context): LocationListener {
     }
 
     private fun locationCallback() = object : LocationCallback() {
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(result: LocationResult?) {
             result ?: return
             for (location in result.locations) {
-                StepApp.locationSubject.onNext(location)
-                val geopoint = GeoPoint(location.latitude, location.longitude)
-                StepApp.updateRoute(geopoint)
+                StepApp.updateLocation(location)
             }
         }
     }
@@ -88,7 +81,7 @@ class LocationService(private val context: Context): LocationListener {
         return LocationRequest.create()?.apply {
             interval = 5000
             fastestInterval = 1000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
 
@@ -96,12 +89,14 @@ class LocationService(private val context: Context): LocationListener {
         Log.i("XXX", "on location changed: ${location?.speed}")
     }
 
+
     @SuppressLint("MissingPermission")
     fun getLocation() {
          locationClient.lastLocation.addOnSuccessListener {
              if(it != null) {
-                 StepApp.locationSubject.onNext(it)
-                 Log.i("XXX", it.longitude.toString() + " " + it.latitude.toString())
+                 StepApp.setStartingPoint(it)
+                 StepApp.locationStream.onNext(it)
+                 StepApp.getCurrentWeather()
              }
          }
     }

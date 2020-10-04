@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -241,6 +242,7 @@ class ProgressFragment : Fragment() {
         barChartValueTapped
             .subscribe {
                 txtDetail.text = it.Steps.toString()
+                Log.i("XXX", it.toString())
             }.addTo(unsubscribeOnDestroy)
 
         viewModel.getLimitedActivities(7)
