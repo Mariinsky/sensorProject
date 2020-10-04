@@ -13,7 +13,6 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.metropolia.sensorproject.services.DataStreams
 import com.metropolia.sensorproject.services.DayDescription
 import com.metropolia.sensorproject.services.Weather
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -22,7 +21,6 @@ import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.fragment_weather.*
 import java.net.URL
-import java.util.concurrent.TimeUnit
 
 
 class WeatherFragment : Fragment() {
@@ -49,8 +47,9 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
-        DataStreams
-            .weatherSubject
+
+        StepApp
+            .weatherStream
             .take(1)
             .observeOn(io())
             .map {
@@ -59,17 +58,14 @@ class WeatherFragment : Fragment() {
                 Pair(it, BitmapFactory.decodeStream(imgStream))
             }
             .observeOn(AndroidSchedulers.mainThread())
-
-
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
                 recyclerViewSetUp(weather)
-
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
             }
             .addTo(disposeOnDestroy)
-        DataStreams.getWeather()
+        StepApp.getCurrentWeather()
     }
 
 

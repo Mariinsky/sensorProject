@@ -16,45 +16,10 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
-import com.metropolia.sensorproject.WEATHER_API_KEY
-import io.reactivex.rxjava3.schedulers.Schedulers.io
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.kotlin.withLatestFrom
-import io.reactivex.rxjava3.subjects.ReplaySubject
+import com.metropolia.sensorproject.StepApp
+import org.osmdroid.util.GeoPoint
 
-object DataStreams {
-    private var stepCount = 0
-    private val api = WeatherApi().service
-    val stepCountSubject: PublishSubject<Int> = PublishSubject.create()
-    val locationSubject: PublishSubject<Location> = PublishSubject.create()
-    val weatherSubject: PublishSubject<Weather> = PublishSubject.create()
-    private val getCurrentWeather: PublishSubject<Unit> = PublishSubject.create()
-
-    init {
-        getCurrentWeather
-            .withLatestFrom(locationSubject)
-            .observeOn(io())
-            .flatMap { (_, location) ->
-                api.fetchWeather(location.latitude, location.longitude, WEATHER_API_KEY)
-            }
-            .subscribe {
-                weatherSubject.onNext(it)
-            }
-
-    }
-
-    fun updateStepCount(steps: Int? = null) {
-        if (steps == null ) { stepCount ++ } else { stepCount = steps }
-        stepCountSubject.onNext(stepCount)
-    }
-
-    fun getWeather() { getCurrentWeather.onNext(Unit) }
-
-    fun getStepCount(): Int { return stepCount }
-}
-
-class SensorService(private val sensorManager: SensorManager) : SensorEventListener {
+class StepSensorService(private val sensorManager: SensorManager) : SensorEventListener {
     private val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
     fun registerListener() {
@@ -71,7 +36,7 @@ class SensorService(private val sensorManager: SensorManager) : SensorEventListe
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
             if(event.sensor == stepDetectorSensor) {
-                DataStreams.updateStepCount()
+                StepApp.updateStepCount()
             }
         }
     }
@@ -104,11 +69,10 @@ class LocationService(private val context: Context): LocationListener {
     }
 
     private fun locationCallback() = object : LocationCallback() {
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(result: LocationResult?) {
             result ?: return
             for (location in result.locations) {
-                DataStreams.locationSubject.onNext(location)
+                StepApp.updateLocation(location)
             }
         }
     }
@@ -117,7 +81,7 @@ class LocationService(private val context: Context): LocationListener {
         return LocationRequest.create()?.apply {
             interval = 5000
             fastestInterval = 1000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }
 
@@ -125,12 +89,14 @@ class LocationService(private val context: Context): LocationListener {
         Log.i("XXX", "on location changed: ${location?.speed}")
     }
 
+
     @SuppressLint("MissingPermission")
     fun getLocation() {
          locationClient.lastLocation.addOnSuccessListener {
              if(it != null) {
-                 DataStreams.locationSubject.onNext(it)
-                 Log.i("XXX", it.longitude.toString() + " " + it.latitude.toString())
+                 StepApp.setStartingPoint(it)
+                 StepApp.locationStream.onNext(it)
+                 StepApp.getCurrentWeather()
              }
          }
     }

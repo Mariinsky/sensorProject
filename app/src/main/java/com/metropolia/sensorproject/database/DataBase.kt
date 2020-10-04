@@ -2,6 +2,7 @@ package com.metropolia.sensorproject.database
 
 import android.content.Context
 import androidx.room.*
+import com.metropolia.sensorproject.services.Weather
 import java.time.LocalDateTime
 import java.util.*
 
@@ -10,6 +11,10 @@ data class DayActivity (
     @PrimaryKey(autoGenerate = true)
     val date: Date,
     val Steps: Int,
+    val timer: Long,
+    val weather: String?,
+    val route: String?,
+    val distance: Float,
 )
 
 @Dao
