@@ -35,6 +35,7 @@ fun MapView.setStartingLocation(location: Location) {
 }
 
 fun MapView.updateRoute(geoPoints: MutableList<GeoPoint>) {
+    this.overlays.clear()
     val polyline = Polyline()
     polyline.setPoints(geoPoints)
     this.controller.setCenter(geoPoints.last())

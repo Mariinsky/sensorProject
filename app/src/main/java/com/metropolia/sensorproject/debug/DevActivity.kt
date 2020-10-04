@@ -49,16 +49,20 @@ class DevActivity : AppCompatActivity() {
             }
 
         // generate random routes
-        var route = mutableListOf<GeoPoint>()
-        for(x in 1..30) {
-            val point = GeoPoint(60.249523 + Random.nextFloat(),24.904677 - Random.nextFloat())
-            route.add(point)
+        fun generateRoute(): String {
+            var route = mutableListOf<GeoPoint>()
+            for(x in 1..10) {
+                val point = GeoPoint(60.249523 + Random.nextFloat(),24.904677 - Random.nextFloat())
+                route.add(point)
+            }
+            return Gson().toJson(route)
         }
+
 
         generate.setOnClickListener {
             val random = Random.nextInt(0, goal)
             val randomTime = Random.nextLong(0, 40000)
-            viewModel.insertActivity(DayActivity(Date(), random, randomTime, null, Gson().toJson(route), 100f ))
+            viewModel.insertActivity(DayActivity(Date(), random, randomTime, null, generateRoute(), 100f ))
         }
 
         get.text = "test weather"

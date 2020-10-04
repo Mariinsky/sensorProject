@@ -27,13 +27,23 @@ import kotlinx.android.synthetic.main.activity_main.*
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.metropolia.sensorproject.database.DayActivity
+import com.metropolia.sensorproject.services.Weather
+import com.metropolia.sensorproject.utils.updateRoute
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.alert_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_progress.*
 import kotlinx.android.synthetic.main.fragment_progress.view.*
+import kotlinx.android.synthetic.main.fragment_progress.view.map
+import kotlinx.android.synthetic.main.fragment_today.view.*
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -44,6 +54,7 @@ class ProgressFragment : Fragment() {
     private lateinit var viewModel: ProgressViewModel
     private val barChartValueTapped = PublishSubject.create<DayActivity>()
     private val unsubscribeOnDestroy = CompositeDisposable()
+    private val gson = Gson()
     private var goal = 0
     private var shouldAnimate = true
 
@@ -53,6 +64,10 @@ class ProgressFragment : Fragment() {
     ): View? {
         // Inflate the layout and set element for this fragment
         val rootView = inflater.inflate(R.layout.fragment_progress, container, false)
+
+        rootView.map?.setTileSource(TileSourceFactory.MAPNIK)
+        rootView.map?.setMultiTouchControls(true)
+        rootView.map?.controller?.setZoom(9.0)
 
         viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         // retrieve data
@@ -240,9 +255,32 @@ class ProgressFragment : Fragment() {
             }
 
         barChartValueTapped
-            .subscribe {
-                txtDetail.text = it.Steps.toString()
-                Log.i("XXX", it.toString())
+            .observeOn(io())
+            .map {
+                var weather: Weather? = null
+                var routeFromJson:MutableList<GeoPoint>?  = null
+                if (it.weather != null) {
+                    weather = gson.fromJson(it.weather, Weather::class.java)
+                }
+                if (it.route != null) {
+                    val routeList: Type = object : TypeToken<MutableList<GeoPoint?>?>() {}.type
+                    routeFromJson = gson.fromJson(it.route, routeList)
+                }
+                Triple(it, weather, routeFromJson)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { (day, weather, route) ->
+                day_steps?.text = "Steps: ${day.Steps}"
+                day_distance?.text = "Distance: ${day.distance.toInt()}m"
+                if(weather != null) {
+                    day_container?.visibility = View.VISIBLE
+                    day_temp?.text = weather.curentTemp
+                    day_wind?.text = weather.windSpeed
+                }
+                if(route != null) {
+                    map?.updateRoute(route)
+                }
+
             }.addTo(unsubscribeOnDestroy)
 
         viewModel.getLimitedActivities(7)
