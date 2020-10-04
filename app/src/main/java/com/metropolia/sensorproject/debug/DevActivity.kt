@@ -48,13 +48,14 @@ class DevActivity : AppCompatActivity() {
 
         generate.setOnClickListener {
             val random = Random.nextInt(0, goal)
-            viewModel.insertActivity(DayActivity(Date(), random))
+            val randomTime = Random.nextLong(0, 40000)
+            viewModel.insertActivity(DayActivity(Date(), random, randomTime ))
         }
         get.text = "test weather"
         get.setOnClickListener {
             subject.onNext(Unit)
-
         }
+
         clear.setOnClickListener {
             GlobalScope.launch { db.clearAllTables()  }
         }

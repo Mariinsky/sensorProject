@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
 import com.metropolia.sensorproject.services.LocationService
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val REQUEST_ALL_NEEDED_PERMISSIONS = 999
     private val db by lazy { AppDB.get(application) }
     private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
-    private val appReadySubject: PublishSubject<Int> = PublishSubject.create()
+    private val appReadySubject: PublishSubject<DayActivity> = PublishSubject.create()
     private lateinit var locationService: LocationService
     private val permissions =
         arrayOf(
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .delay(1, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                StepApp.updateStepCount(it)
+                StepApp.updateStepCount(it.Steps)
                 if(isLogedIn){
                     val intent = Intent(this, StepTrackerActivity::class.java)
                     startActivity(intent)
@@ -244,10 +245,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .show()
     }
 
-    private fun readStepFromFile(): Int {
+    private fun readValuesFromFile(): DayActivity {
         return try {
-            val reader = openFileInput(FILE_STEPS)?.bufferedReader().use { it?.readText() ?: "-1" }
-            reader.toInt()
+            val reader = openFileInput(DAY_VALUES_FILE)?.bufferedReader().use { it?.readText() ?: "0" }
+            Gson().fromJson(reader, DayActivity::class.java)
+        } catch (e: Exception) {
+            Log.i("XXX", "error" + e.message.toString())
+            DayActivity()
+        }
+    }
+
+    private fun readTimeFromFile(): Long {
+        return try {
+            val reader = openFileInput(TIME_FILE)?.bufferedReader().use { it?.readText() ?: "0" }
+            reader.toLong()
         } catch (e: Exception) {
             Log.i("XXX", "error" + e.message.toString())
             return -1
@@ -261,17 +272,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .map { it() }
             .map {
                 if (!it.isNullOrEmpty()) {
-                    if(!compareDate(it.first().date)) {
-                        db.activityDao().insert(DayActivity(Date(), readStepFromFile()))
-                        this.openFileOutput(FILE_STEPS, Context.MODE_PRIVATE).use { os ->
-                            os.write(ZERO_STEPS.toString().toByteArray())
+                    if(!it!!.first().date?.let { it1 -> compareDate(it1) }!!) {
+                        db.activityDao().insert( readValuesFromFile() )
+                        this.openFileOutput(DAY_VALUES_FILE, Context.MODE_PRIVATE).use { os ->
+                            os.write("".toByteArray())
                         }
-                        appReadySubject.onNext(ZERO_STEPS)
+                        appReadySubject.onNext(DayActivity())
                     } else {
-                        appReadySubject.onNext(readStepFromFile())
+                        appReadySubject.onNext(readValuesFromFile())
                     }
                 } else {
-                    appReadySubject.onNext(ZERO_STEPS)
+                    appReadySubject.onNext(DayActivity())
                 }
             }
             .subscribe {

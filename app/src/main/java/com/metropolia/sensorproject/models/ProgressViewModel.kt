@@ -3,10 +3,14 @@ package com.metropolia.sensorproject.models
 import android.app.Application
 import android.content.Context
 import android.location.Location
+
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.metropolia.sensorproject.FILE_STEPS
+import com.google.gson.Gson
+import com.metropolia.sensorproject.DAY_VALUES_FILE
+
 import com.metropolia.sensorproject.StepApp
+
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
 import io.reactivex.rxjava3.core.Observable
@@ -16,7 +20,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.ReplaySubject
 import org.osmdroid.util.GeoPoint
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
+
 
 class ProgressViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -49,7 +53,9 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
             .locationSubject
             .observeOn(io())
             .subscribe {
-                val geoPoint = GeoPoint(it.latitude + Random.nextFloat(), it.longitude - Random.nextFloat())
+                // Use this for testing and generating random route.
+                // val geoPoint = GeoPoint(it.latitude + Random.nextFloat(), it.longitude - Random.nextFloat())
+                val geoPoint = GeoPoint(it.latitude, it.longitude)
                 route.add(geoPoint)
                 routeLocationSubject.onNext(route)
             }
@@ -79,7 +85,7 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
                 val query = db.activityDao().getLimitedActivities(it)
                 val steps = mutableListOf<Int>()
                 query.forEach { day ->
-                    steps.add(day.Steps)
+                    day.Steps?.let { it1 -> steps.add(it1) }
                 }
                 limitedActivitiesSubject.onNext(Pair(steps, query))
             }
@@ -100,13 +106,15 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
 
     fun startStepWriter() {
         stepWriter = Observable
-            .interval(15, TimeUnit.SECONDS)
+            .interval(5, TimeUnit.SECONDS)
             .timeInterval()
             .observeOn(io())
             .subscribe {
                 if (StepApp.getStepCount() != 0) {
-                    context.openFileOutput(FILE_STEPS, Context.MODE_PRIVATE).use {
-                        it?.write(StepApp.getStepCount().toString().toByteArray())
+                    context.openFileOutput(DAY_VALUES_FILE, Context.MODE_PRIVATE).use {
+                        Log.i("XXX", "writing steps")
+                        val json = Gson().toJson(StepApp.dayActivity)
+                        it?.write(json.toByteArray())
                     }
                 }
             }

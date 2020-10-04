@@ -257,7 +257,7 @@ class ProgressFragment : Fragment() {
         val days = ArrayList<String>()
         //generate data for each bar and xaxis
         activityData.forEach { day ->
-            entries.add(BarEntry(entries.size.toFloat(), day.Steps.toFloat()))
+            day.Steps?.toFloat()?.let { BarEntry(entries.size.toFloat(), it) }?.let { entries.add(it) }
             days.add(SimpleDateFormat("MM-dd", Locale.ENGLISH).format(day.date))
         }
 

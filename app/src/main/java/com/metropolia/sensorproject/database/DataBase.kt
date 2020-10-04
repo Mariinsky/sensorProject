@@ -2,14 +2,17 @@ package com.metropolia.sensorproject.database
 
 import android.content.Context
 import androidx.room.*
+import com.metropolia.sensorproject.services.Weather
 import java.time.LocalDateTime
 import java.util.*
 
 @Entity
 data class DayActivity (
     @PrimaryKey(autoGenerate = true)
-    val date: Date,
-    val Steps: Int,
+    var date: Date? = null,
+    var Steps: Int? = null,
+    var timer: Long? = null,
+    var weather: String? = null
 )
 
 @Dao

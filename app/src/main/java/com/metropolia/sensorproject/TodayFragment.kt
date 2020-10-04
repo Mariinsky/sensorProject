@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,9 +86,10 @@ class TodayFragment : Fragment() {
             .emitStepsCount
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+
                 txt_total_step.text = it.toString()
                 progressBar.progress = it
-                val kcal = round(it * 0.4 * 100) / 100
+                val kcal = round(it * 0.3 * 100) / 100
                 txtKcal.text = kcal.toString()
             }
 
