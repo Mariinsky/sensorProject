@@ -272,7 +272,7 @@ class ProgressFragment : Fragment() {
                 day_steps?.text = "Steps: ${day.Steps}"
                 day_distance?.text = "Distance: ${day.distance.toInt()}m"
                 if(weather != null) {
-                    day_container?.visibility = View.VISIBLE
+                    day_weather_container?.visibility = View.VISIBLE
                     day_temp?.text = weather.curentTemp
                     day_wind?.text = weather.windSpeed
                 }

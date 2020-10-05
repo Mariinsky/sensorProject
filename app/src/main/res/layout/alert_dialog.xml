@@ -27,9 +27,9 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="50dp"
-        android:contentDescription="Enter name"
-        android:gravity="center"
+        android:contentDescription="@string/name_input_layout"
         android:hint="@string/enter_name"
+        android:gravity="center"
         app:counterEnabled="true"
         app:counterMaxLength="20"
         app:endIconMode="clear_text"
@@ -54,9 +54,9 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="50dp"
-        android:contentDescription="Enter weight"
-        android:gravity="center"
+        android:contentDescription="@string/weight_input_layout"
         android:hint="@string/enter_weight"
+        android:gravity="center"
         app:counterEnabled="true"
         app:counterMaxLength="3"
         app:endIconMode="clear_text"
@@ -83,9 +83,9 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="50dp"
-        android:contentDescription="Enter height"
-        android:gravity="center"
+        android:contentDescription="@string/height_input_layout"
         android:hint="@string/enter_height"
+        android:gravity="center"
         app:counterEnabled="true"
         app:counterMaxLength="3"
         app:endIconMode="clear_text"
@@ -112,9 +112,9 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="50dp"
-        android:contentDescription="Set daily goal"
-        android:gravity="center"
+        android:contentDescription="@string/goal_input_layout"
         android:hint="@string/enter_goal"
+        android:gravity="center"
         app:endIconMode="clear_text"
         app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -148,6 +148,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="@string/save_button"
+            android:contentDescription="@string/submit_button"
             app:cornerRadius="24dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -156,6 +157,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="@string/cancel_button"
+            android:contentDescription="@string/cancel_button"
             app:cornerRadius="24dp" />
     </LinearLayout>
 
