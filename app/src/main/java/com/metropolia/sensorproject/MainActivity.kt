@@ -26,6 +26,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 import org.osmdroid.config.Configuration
+import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -243,8 +244,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun readValuesFromFile(): DayActivity {
+        return try {
             val reader = openFileInput(DAY_VALUES_FILE)?.bufferedReader().use { it?.readText() }
-            return gson.fromJson(reader, DayActivity::class.java)
+            gson.fromJson(reader, DayActivity::class.java)
+        } catch (e: Exception) {
+            DayActivity(Date(), 0, 0, null, null, 0f)
+        }
     }
 
     private fun checkDateAndStart() {
