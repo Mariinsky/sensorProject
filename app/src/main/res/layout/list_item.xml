@@ -25,7 +25,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:layout_gravity="center"
-            android:text="Day" />
+            android:text="Day"
+            android:contentDescription="@string/date"/>
 
         <TextView
             android:id="@+id/temp"
@@ -33,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
+            android:contentDescription="@string/temp"
             android:text="Temp" />
 
         <ImageView
@@ -40,7 +42,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:contentDescription="@string/icon"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

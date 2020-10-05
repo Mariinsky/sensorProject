@@ -44,14 +44,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total"
+                            android:text="@string/total"
                             android:textSize="30sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/steps"
-                            android:textSize="10sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <TextView
@@ -121,7 +121,6 @@
                             android:textSize="15sp" />
 
                         <TextView
-
                             android:id="@+id/best_result_day"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -133,6 +132,7 @@
 
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/barchart"
+                    android:contentDescription="@string/graph"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="300dp"
@@ -197,6 +197,7 @@
 
                 <org.osmdroid.views.MapView
                     android:id="@+id/map"
+                    android:contentDescription="@string/map"
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="300dp"/>

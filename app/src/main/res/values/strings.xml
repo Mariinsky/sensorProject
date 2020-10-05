@@ -33,4 +33,27 @@
     <string name="east"> East</string>
     <string name="west"> West</string>
     <string name="zero">0</string>
+    <string name ="image">app logo</string>
+    <string name ="name_input_layout">Enter name box</string>
+    <string name ="weight_input_layout">Enter weight box</string>
+    <string name ="height_input_layout">Enter height box</string>
+    <string name ="goal_input_layout">Enter daily goal box</string>
+    <string name="step_tracker_app">Step Tracker App</string>
+    <string name="submit_button">Submit</string>
+    <string name="update_form">Update user data form</string>
+    <string name="progress_bar">Progress bar</string>
+    <string name="total">Total</string>
+    <string name="graph">graph show latest 7days data</string>
+    <string name="map">map shows route</string>
+    <string name="distance">distance icon</string>
+    <string name="kcal">kcal icon</string>
+    <string name="timer">time icon</string>
+    <string name="recycler_view">weather prediction</string>
+    <string name="humidity">humidity icon</string>
+    <string name="wind_speed">wind speed icon</string>
+    <string name="wind_direction">wind direction icon</string>
+    <string name="date">date</string>
+    <string name="temp">temperature icon</string>
+    <string name="icon">weather icon</string>
+
 </resources>

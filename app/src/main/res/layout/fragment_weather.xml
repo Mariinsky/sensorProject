@@ -33,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="5dp"
+                android:contentDescription="@string/recycler_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -111,6 +112,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/humidity"
                             app:srcCompat="@drawable/ic_humidity" />
 
                         <TextView
@@ -131,6 +133,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/wind_speed"
                             app:srcCompat="@drawable/ic_wind" />
 
                         <TextView
@@ -150,7 +153,8 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
-                            app:srcCompat="@drawable/ic_compass" />
+                            app:srcCompat="@drawable/ic_compass"
+                            android:contentDescription="@string/wind_direction"/>
 
                         <TextView
                             android:id="@+id/txtDirection"
@@ -222,6 +226,7 @@
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_arrow_pointing_north"
+                        android:contentDescription="@string/wind_direction"
                         tools:layout_editor_absoluteX="178dp"
                         tools:layout_editor_absoluteY="553dp" />
 
