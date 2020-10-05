@@ -13,44 +13,42 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
-import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
+import com.google.gson.Gson
 import com.metropolia.sensorproject.database.AppDB
 import com.metropolia.sensorproject.database.DayActivity
-import com.metropolia.sensorproject.services.DataStreams
 import com.metropolia.sensorproject.services.LocationService
 import com.metropolia.sensorproject.utils.compareDate
-import com.metropolia.sensorproject.workmanager.FILE_STEPS
-import com.metropolia.sensorproject.workmanager.ZERO_STEPS
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.gif
-import kotlinx.android.synthetic.main.fragment_weather.*
+import org.osmdroid.config.Configuration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var sharedPreferences: SharedPreferences
-    private val REQUEST_ALL_NEEDED_PERMISSIONS = 999
+
     private val db by lazy { AppDB.get(application) }
     private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
-    private val appReadySubject: PublishSubject<Int> = PublishSubject.create()
+    private val appReadySubject: PublishSubject<DayActivity> = PublishSubject.create()
     private lateinit var locationService: LocationService
-    private val permissions =
-        arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACTIVITY_RECOGNITION,
-        )
+    private val gson = Gson()
+
 
     var isLogedIn = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val ctx = applicationContext
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(R.layout.activity_main)
-        Glide.with(this)
+        Glide
+            .with(this)
             .load(R.drawable.giphy)
             .into(gif)
         locationService = LocationService(this)
@@ -63,14 +61,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 checkDateAndStart()
-                //locationService.getLocation()
             }
 
         appReadySubject
             .delay(1, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                DataStreams.updateStepCount(it)
+                StepApp.setValues(it)
+                locationService.getLocation()
                 if(isLogedIn){
                     val intent = Intent(this, StepTrackerActivity::class.java)
                     startActivity(intent)
@@ -105,8 +103,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(p0: View?) {
         when(p0?.id){
-            R.id.btnSave-> {
-                if(validate()){
+            R.id.btnSave -> {
+                if (validate()) {
                     saveData()
                 }
             }
@@ -121,7 +119,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count > layoutEditName.counterMaxLength) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditName.error = getString(R.string.name_input_error)
                 } else {
                     layoutEditName.error = null
@@ -135,7 +133,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditHeight.error = getString(R.string.input_empty)
                 } else {
                     layoutEditHeight.error = null
@@ -149,7 +147,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditWeight.error = getString(R.string.input_empty)
                 } else {
                     layoutEditWeight.error = null
@@ -163,7 +161,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    Log.d("main","$count")
+                    Log.d("main", "$count")
                     layoutEditGoal.error = getString(R.string.input_empty)
                 } else {
                     layoutEditGoal.error = null
@@ -202,8 +200,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION
             ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_ALL_NEEDED_PERMISSIONS)
+            ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_ALL_NEEDED_PERMISSIONS)
         } else {
             checkedPermissionSubject.onNext(Unit)
         }
@@ -232,7 +234,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 setPositiveButton("I understand") { _, _ ->
                     ActivityCompat.requestPermissions(
                         this@MainActivity,
-                        permissions,
+                        PERMISSIONS,
                         REQUEST_ALL_NEEDED_PERMISSIONS
                     )
                 }
@@ -241,14 +243,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .show()
     }
 
-    private fun readStepFromFile(): Int {
-        return try {
-            val reader = openFileInput(FILE_STEPS)?.bufferedReader().use { it?.readText() ?: "-1" }
-            reader.toInt()
-        } catch (e: Exception) {
-            Log.i("XXX", "error" + e.message.toString())
-            return -1
-        }
+    private fun readValuesFromFile(): DayActivity {
+            val reader = openFileInput(DAY_VALUES_FILE)?.bufferedReader().use { it?.readText() }
+            return gson.fromJson(reader, DayActivity::class.java)
     }
 
     private fun checkDateAndStart() {
@@ -259,16 +256,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .subscribe {
                 if (!it.isNullOrEmpty()) {
                     if(!compareDate(it.first().date)) {
-                        db.activityDao().insert(DayActivity(Date(), readStepFromFile()))
-                        this.openFileOutput(FILE_STEPS, Context.MODE_PRIVATE).use { os ->
-                            os.write(ZERO_STEPS.toString().toByteArray())
+                        db.activityDao().insert( readValuesFromFile() )
+                        this.openFileOutput(DAY_VALUES_FILE, Context.MODE_PRIVATE).use { os ->
+                            os.write("".toByteArray())
                         }
-                        appReadySubject.onNext(ZERO_STEPS)
+                        appReadySubject.onNext(DayActivity(Date(), 0, 0, null, null, 0f))
                     } else {
-                        appReadySubject.onNext(readStepFromFile())
+                        appReadySubject.onNext(readValuesFromFile())
                     }
                 } else {
-                    appReadySubject.onNext(ZERO_STEPS)
+                    appReadySubject.onNext(readValuesFromFile())
                 }
             }
     }

@@ -32,4 +32,8 @@
     <string name="south"> South</string>
     <string name="east"> East</string>
     <string name="west"> West</string>
+<<<<<<< HEAD
+=======
+    <string name="zero">0</string>
+>>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
 </resources>

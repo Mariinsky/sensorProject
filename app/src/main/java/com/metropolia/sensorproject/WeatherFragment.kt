@@ -13,7 +13,10 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+<<<<<<< HEAD
 import com.metropolia.sensorproject.services.DataStreams
+=======
+>>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
 import com.metropolia.sensorproject.services.DayDescription
 import com.metropolia.sensorproject.services.Weather
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -22,7 +25,6 @@ import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.fragment_weather.*
 import java.net.URL
-import java.util.concurrent.TimeUnit
 
 
 class WeatherFragment : Fragment() {
@@ -49,8 +51,14 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
+<<<<<<< HEAD
         DataStreams
             .weatherSubject
+=======
+
+        StepApp
+            .weatherStream
+>>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
             .take(1)
             .observeOn(io())
             .map {
@@ -64,11 +72,15 @@ class WeatherFragment : Fragment() {
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
                 recyclerViewSetUp(weather)
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
             }
             .addTo(disposeOnDestroy)
+<<<<<<< HEAD
         DataStreams.getWeather()
     }
 
@@ -85,6 +97,24 @@ class WeatherFragment : Fragment() {
         Log.d("weather", "$dayList")
     }
 
+=======
+        StepApp.getCurrentWeather()
+    }
+
+
+    //recycler view for 8 days forecast
+    private fun recyclerViewSetUp(weather: Weather) {
+        dayList.clear()
+        weather.daily.forEach { dayList.add(it) }
+        dayAdapter = CustomAdapter(dayList)
+        val mLayoutManager = LinearLayoutManager(activity)
+        mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        lv_weather.layoutManager = mLayoutManager
+        lv_weather.adapter = dayAdapter
+        Log.d("weather", "$dayList")
+    }
+
+>>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
     //define direction from angle
     private fun degToCompass(num: Int): String {
         val degree = num / 22.5 + 0.5

@@ -2,6 +2,7 @@ package com.metropolia.sensorproject.services
 
 
 
+import com.metropolia.sensorproject.WEATHER_API_URL
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.Retrofit
 
@@ -13,10 +14,9 @@ import retrofit2.http.Query
 
 
 class WeatherApi() {
-    private val baseUrl= "https://api.openweathermap.org/data/2.5/"
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
+        .baseUrl(WEATHER_API_URL)
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
