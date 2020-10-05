@@ -52,16 +52,7 @@ class TodayFragment : Fragment() {
         btnStart.setOnClickListener {
             startStopChronometer()
             if (!start) {
-<<<<<<< HEAD
-                val stepWorker: WorkRequest = OneTimeWorkRequestBuilder<StepWorkManager>()
-                    .addTag("step")
-                    .build()
-                workManager.enqueue(stepWorker)
-                //locationService.getLocation()
-                locationService.startGettingLocation()
-=======
                 viewModel.startServices.onNext(Unit)
->>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
                 start = true
                 btnStart.text = getString(R.string.stop_button)
             } else {

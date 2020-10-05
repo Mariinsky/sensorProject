@@ -279,12 +279,7 @@ class ProgressFragment : Fragment() {
                 if(route != null) {
                     map?.updateRoute(route)
                 }
-
-<<<<<<< HEAD
-=======
             }.addTo(unsubscribeOnDestroy)
-
->>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
         viewModel.getLimitedActivities(7)
     }
 

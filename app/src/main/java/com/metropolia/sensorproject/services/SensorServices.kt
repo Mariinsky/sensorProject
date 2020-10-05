@@ -94,14 +94,9 @@ class LocationService(private val context: Context): LocationListener {
     fun getLocation() {
          locationClient.lastLocation.addOnSuccessListener {
              if(it != null) {
-<<<<<<< HEAD
-                 DataStreams.locationSubject.onNext(it)
-                 Log.i("XXX", it.longitude.toString() + " " + it.latitude.toString())
-=======
                  StepApp.setStartingPoint(it)
                  StepApp.locationStream.onNext(it)
                  StepApp.getCurrentWeather()
->>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
              }
          }
     }

@@ -143,16 +143,10 @@
                 android:id="@+id/day_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-<<<<<<< HEAD
-                android:textSize="30sp"
-                tools:text=""
-                android:layout_marginTop="20dp"
-                android:textAlignment="center"/>
-=======
-                android:orientation="vertical"
                 android:layout_marginTop="20dp"
                 android:paddingHorizontal="10dp"
-                android:paddingBottom="100dp">
+                android:paddingBottom="100dp"
+                android:orientation="horizontal" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -206,11 +200,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="300dp"/>
-
             </LinearLayout>
->>>>>>> 9a11b18a0e3f3cf5cbd95617434e177c088a823f
-        </LinearLayout>
-
 
     </ScrollView>
 
