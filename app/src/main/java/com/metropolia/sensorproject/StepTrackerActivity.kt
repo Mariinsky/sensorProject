@@ -1,6 +1,7 @@
 package com.metropolia.sensorproject
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ class StepTrackerActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun setupTabs() {
         val adapter = ViewPagerAdapter(supportFragmentManager)
         //add title and fragment to tab
@@ -37,6 +39,7 @@ class StepTrackerActivity : AppCompatActivity() {
         adapter.addFragment(WeatherFragment(),"Weather")
         viewPager.adapter = adapter
         tablayout.setupWithViewPager(viewPager)
+
 
         //add icon to tab
         tablayout.getTabAt(0)!!.setIcon(R.drawable.ic_footprint)
