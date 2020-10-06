@@ -92,6 +92,7 @@ class ProgressFragment : Fragment() {
             //show dialog
             val mAlertDialog = mBuilder.show()
 
+            //check input on typing
             mDialogView.editTxtName.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
 
@@ -171,7 +172,7 @@ class ProgressFragment : Fragment() {
                 }
             })
 
-
+            //validate on saving
             mDialogView.btnSave.setOnClickListener(object : View.OnClickListener {
                 val newName: String = mDialogView.editTxtName.text.toString()
                 val newWeight: Int = mDialogView.editTxtWeight.text.toString().toInt()
@@ -235,6 +236,7 @@ class ProgressFragment : Fragment() {
                 }
             })
 
+            //cancel
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
             }
@@ -283,12 +285,14 @@ class ProgressFragment : Fragment() {
         viewModel.getLimitedActivities(7)
     }
 
+    //retrieve data of total, average and best record
     private fun setupWeekStatistic(steps: MutableList<Int>) {
         week_total_steps.text = steps.sum().toString()
         average_steps.text = steps.average().toInt().toString()
         best_result_day.text = steps.maxOrNull()?.toString() ?: "0"
     }
 
+    //display 7 latest days on bar chart
     private fun setupBarChart(activityData: List<DayActivity>) {
         val entries = ArrayList<BarEntry>()
         val days = ArrayList<String>()
@@ -302,14 +306,18 @@ class ProgressFragment : Fragment() {
         barDataSet.color = resources.getColor(R.color.darkPink)
         val dataSets = ArrayList<IBarDataSet>()
         dataSets.add(barDataSet)
+
         //set description
         val description = Description()
         description.text = ""
         barchart.description = description
+
         val data = BarData(barDataSet)
         data.barWidth = 0.9f
+
         //no data display
         barchart.setNoDataText("No data")
+
         //generate data for chart
         barchart.data = data
         barchart.setBackgroundColor(resources.getColor(R.color.lightPink))

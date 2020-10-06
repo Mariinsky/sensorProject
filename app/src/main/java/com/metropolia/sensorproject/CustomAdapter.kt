@@ -45,11 +45,13 @@ class CustomAdapter(private var list: ArrayList<DayDescription>) : RecyclerView.
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val date = list[position]
+        
         //get date for next 8days
         val day = LocalDate.now().plus((position+1).toLong(), ChronoUnit.DAYS)
         val formatted= day.format(DateTimeFormatter.ofPattern("EE, MM-dd"))
         holder.temp.text= date.dayTemp
         holder.day.text = formatted.toString()
+        
         //get image from url
         GlobalScope.launch(Dispatchers.IO) {
             val imageUrl = URL("https://openweathermap.org/img/wn/${date.weather[0].icon}@4x.png")
@@ -64,6 +66,8 @@ class CustomAdapter(private var list: ArrayList<DayDescription>) : RecyclerView.
                 holder.img.setImageBitmap(bitmapImage)
             }
         }
+        
+        //animated item when hover on
         holder.itemView.setOnFocusChangeListener(object: View.OnFocusChangeListener{
             override fun onFocusChange(p0: View?, p1: Boolean) {
                 if(p1) {

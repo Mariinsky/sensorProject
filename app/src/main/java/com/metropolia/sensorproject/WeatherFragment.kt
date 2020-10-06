@@ -31,7 +31,6 @@ class WeatherFragment : Fragment() {
     private var dayList = ArrayList<DayDescription>()
     private lateinit var dayAdapter: CustomAdapter
     private var added: Boolean = false
-
     private val disposeOnDestroy = CompositeDisposable()
 
    override fun onCreateView(
