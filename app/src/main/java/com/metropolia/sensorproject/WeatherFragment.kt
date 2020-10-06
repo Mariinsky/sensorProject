@@ -24,9 +24,6 @@ import java.net.URL
 
 
 class WeatherFragment : Fragment() {
-    companion object {
-        fun newInstance(): WeatherFragment = WeatherFragment()
-    }
 
     private var dayList = ArrayList<DayDescription>()
     private lateinit var dayAdapter: CustomAdapter

@@ -2,11 +2,13 @@ package com.metropolia.sensorproject.utils
 
 import android.animation.ObjectAnimator
 import android.graphics.Bitmap
+import android.graphics.Paint
 import android.graphics.drawable.VectorDrawable
 import android.location.Location
 import android.os.Build
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
+import androidx.core.content.ContextCompat
 import com.metropolia.sensorproject.R
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -31,16 +33,19 @@ fun MapView.setStartingLocation(location: Location) {
         marker.title = "Start"
         marker.snippet ="You are here"
         marker.position = startingPoint
-        this.controller.setZoom(9.0)
+        this.controller.setZoom(14.0)
         this.controller.setCenter(startingPoint)
         this.overlays.add(marker)
 }
 
 fun MapView.updateRoute(geoPoints: MutableList<GeoPoint>) {
+    this.setMultiTouchControls(true)
+    this.setBuiltInZoomControls(true)
     this.overlays.clear()
     val polyline = Polyline()
+    polyline.setColor(R.color.pink);
+    polyline.getPaint().setStrokeCap(Paint.Cap.ROUND);
     polyline.setPoints(geoPoints)
-    polyline.setColor(R.color.darkPink)
     this.controller.setCenter(geoPoints.last())
     this.overlays.add(polyline)
     this.invalidate()
