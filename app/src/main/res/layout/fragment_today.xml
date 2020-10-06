@@ -38,6 +38,7 @@
             android:indeterminate="false"
             android:max="100"
             android:progress="65"
+            android:contentDescription="@string/progress_bar"
             android:progressDrawable="@drawable/circular_progress_bar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -139,7 +140,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@drawable/ic_distance"
-                    app:tint="@color/darkPink" />
+                    app:tint="@color/darkPink"
+                    android:contentDescription="@string/distance"/>
 
                 <TextView
                     android:id="@+id/txtDistance"
@@ -167,9 +169,10 @@
                     android:id="@+id/imageView3"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    app:tint="@color/darkPink"
                     android:src="@drawable/ic_fire"
-                    app:tint="@color/darkPink" />
-
+                    android:contentDescription="@string/kcal"
+                    />
                 <TextView
                     android:id="@+id/txtKcal"
                     android:layout_width="wrap_content"
@@ -198,7 +201,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@drawable/ic_timer"
-                    app:tint="@color/darkPink" />
+                    app:tint="@color/darkPink"
+                    android:contentDescription="@string/timer"/>
 
                 <Chronometer
                     android:id="@+id/txtTime"
@@ -216,6 +220,7 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_marginTop="20dp"
-        android:layout_height="300dp"/>
+        android:layout_height="300dp"
+        android:contentDescription="@string/map"/>
     </LinearLayout>
 </ScrollView>

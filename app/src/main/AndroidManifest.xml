@@ -24,9 +24,6 @@
             android:name=".StepTrackerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".StepCounterActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">

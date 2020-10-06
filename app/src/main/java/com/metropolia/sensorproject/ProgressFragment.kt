@@ -8,7 +8,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,9 +26,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.metropolia.sensorproject.database.DayActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.metropolia.sensorproject.database.DayActivity
 import com.metropolia.sensorproject.services.Weather
 import com.metropolia.sensorproject.utils.updateRoute
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -40,7 +39,6 @@ import kotlinx.android.synthetic.main.alert_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_progress.*
 import kotlinx.android.synthetic.main.fragment_progress.view.*
 import kotlinx.android.synthetic.main.fragment_progress.view.map
-import kotlinx.android.synthetic.main.fragment_today.view.*
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import java.lang.reflect.Type
@@ -68,6 +66,7 @@ class ProgressFragment : Fragment() {
         rootView.map?.setTileSource(TileSourceFactory.MAPNIK)
         rootView.map?.setMultiTouchControls(true)
         rootView.map?.controller?.setZoom(9.0)
+        rootView.map?.visibility = View.GONE
 
         viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         // retrieve data
@@ -93,6 +92,7 @@ class ProgressFragment : Fragment() {
             //show dialog
             val mAlertDialog = mBuilder.show()
 
+            //check input on typing
             mDialogView.editTxtName.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
 
@@ -172,7 +172,7 @@ class ProgressFragment : Fragment() {
                 }
             })
 
-
+            //validate on saving
             mDialogView.btnSave.setOnClickListener(object : View.OnClickListener {
                 val newName: String = mDialogView.editTxtName.text.toString()
                 val newWeight: Int = mDialogView.editTxtWeight.text.toString().toInt()
@@ -236,6 +236,7 @@ class ProgressFragment : Fragment() {
                 }
             })
 
+            //cancel
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
             }
@@ -273,25 +274,26 @@ class ProgressFragment : Fragment() {
                 day_steps?.text = "Steps: ${day.Steps}"
                 day_distance?.text = "Distance: ${day.distance.toInt()}m"
                 if(weather != null) {
-                    day_container?.visibility = View.VISIBLE
+                    day_weather_container?.visibility = View.VISIBLE
                     day_temp?.text = weather.curentTemp
                     day_wind?.text = weather.windSpeed
                 }
                 if(route != null) {
+                    map?.visibility = View.VISIBLE
                     map?.updateRoute(route)
                 }
-
             }.addTo(unsubscribeOnDestroy)
-
         viewModel.getLimitedActivities(7)
     }
 
+    //retrieve data of total, average and best record
     private fun setupWeekStatistic(steps: MutableList<Int>) {
         week_total_steps.text = steps.sum().toString()
         average_steps.text = steps.average().toInt().toString()
         best_result_day.text = steps.maxOrNull()?.toString() ?: "0"
     }
 
+    //display 7 latest days on bar chart
     private fun setupBarChart(activityData: List<DayActivity>) {
         val entries = ArrayList<BarEntry>()
         val days = ArrayList<String>()
@@ -305,14 +307,18 @@ class ProgressFragment : Fragment() {
         barDataSet.color = resources.getColor(R.color.darkPink)
         val dataSets = ArrayList<IBarDataSet>()
         dataSets.add(barDataSet)
+
         //set description
         val description = Description()
         description.text = ""
         barchart.description = description
+
         val data = BarData(barDataSet)
         data.barWidth = 0.9f
+
         //no data display
         barchart.setNoDataText("No data")
+
         //generate data for chart
         barchart.data = data
         barchart.setBackgroundColor(resources.getColor(R.color.lightPink))

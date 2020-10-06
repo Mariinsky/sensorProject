@@ -35,7 +35,8 @@
                 android:layout_marginStart="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/recycler_view"/>
 
             <LinearLayout
                 android:id="@+id/tem_detail"
@@ -75,13 +76,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/initial_step"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        android:textColor="@color/dark"/>
 
                     <ImageView
                         android:id="@+id/weather_icon"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="@string/icon"/>
                 </LinearLayout>
 
 
@@ -111,7 +114,8 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
-                            app:srcCompat="@drawable/ic_humidity" />
+                            app:srcCompat="@drawable/ic_humidity"
+                            android:contentDescription="@string/humidity"/>
 
                         <TextView
                             android:id="@+id/txtHumidity"
@@ -131,7 +135,8 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
-                            app:srcCompat="@drawable/ic_wind" />
+                            app:srcCompat="@drawable/ic_wind"
+                            android:contentDescription="@string/wind_speed"/>
 
                         <TextView
                             android:id="@+id/txtWind"
@@ -150,7 +155,8 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
-                            app:srcCompat="@drawable/ic_compass" />
+                            app:srcCompat="@drawable/ic_compass"
+                            android:contentDescription="@string/wind_direction"/>
 
                         <TextView
                             android:id="@+id/txtDirection"
@@ -174,7 +180,8 @@
                 app:layout_constraintStart_toEndOf="@+id/wind_direction"
                 app:srcCompat="@drawable/ic_anemometer"
                 app:tint="@color/darkPink"
-                android:translationZ="90dp"/>
+                android:translationZ="90dp"
+                android:contentDescription="@string/wind_direction"/>
 
             <LinearLayout
                 android:id="@+id/wind_direction"

@@ -62,6 +62,24 @@ class TodayFragment : Fragment() {
 
             }
         }
+        setupPage()
+    }
+
+    private fun startStopChronometer() {
+        timerStart = when (timerStart) {
+            true -> {
+                StepApp.chronometer?.stop()
+                false
+            }
+            else -> {
+                StepApp.setChronoBase()
+                StepApp.chronometer?.start()
+                true
+            }
+        }
+    }
+
+    private fun setupPage() {
         txt_total_step.text = StepApp.getStepCount().toString()
         progressBar.progress = StepApp.getStepCount()
         txtKcal.text = (StepApp.getStepCount() * 0.4).toInt().toString()
@@ -90,21 +108,7 @@ class TodayFragment : Fragment() {
             .startingLocationSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                    map?.setStartingLocation(it)
+                map?.setStartingLocation(it)
             }
-    }
-
-   private fun startStopChronometer() {
-       timerStart = when(timerStart) {
-           true -> {
-               StepApp.chronometer?.stop()
-               false
-           }
-           else -> {
-               StepApp.setChronoBase()
-               StepApp.chronometer?.start()
-               true
-           }
-       }
     }
 }

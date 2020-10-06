@@ -31,7 +31,6 @@ class WeatherFragment : Fragment() {
     private var dayList = ArrayList<DayDescription>()
     private lateinit var dayAdapter: CustomAdapter
     private var added: Boolean = false
-
     private val disposeOnDestroy = CompositeDisposable()
 
    override fun onCreateView(
@@ -47,7 +46,6 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
-
         StepApp
             .weatherStream
             .take(1)
@@ -58,9 +56,12 @@ class WeatherFragment : Fragment() {
                 Pair(it, BitmapFactory.decodeStream(imgStream))
             }
             .observeOn(AndroidSchedulers.mainThread())
+
+
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
                 recyclerViewSetUp(weather)
+
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
             }

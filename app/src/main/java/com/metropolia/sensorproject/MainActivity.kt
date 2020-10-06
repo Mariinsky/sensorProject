@@ -25,6 +25,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.gif
 import org.osmdroid.config.Configuration
 import java.lang.Exception
 import java.util.*
@@ -33,15 +34,13 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var sharedPreferences: SharedPreferences
-
     private val db by lazy { AppDB.get(application) }
     private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
     private val appReadySubject: PublishSubject<DayActivity> = PublishSubject.create()
     private lateinit var locationService: LocationService
     private val gson = Gson()
-
-
     var isLogedIn = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val ctx = applicationContext
@@ -81,6 +80,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         checkPermissions()
     }
 
+    //validation for user form
     private fun validate(): Boolean {
         if(editTxtName.text.toString().isEmpty()){
             layoutEditName.error = getString(R.string.input_empty)
@@ -111,6 +111,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    //check input error when typing
     private fun inputCheck() {
         editTxtName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -170,6 +171,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    //save data into shared preference
     private fun saveData() {
         val name: String = editTxtName.text.toString()
         val weight: Int = editTxtWeight.text.toString().toInt()
