@@ -1,19 +1,19 @@
 package com.metropolia.sensorproject.services
 
-
-
 import com.metropolia.sensorproject.WEATHER_API_URL
+import com.metropolia.sensorproject.models.Weather
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.Retrofit
-
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-
 import retrofit2.http.Query
 
-
-class WeatherApi() {
+/**
+ *  Weather api for getting weather from https://openweathermap.org/
+ *  uses retrofit
+ * */
+class WeatherApi {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(WEATHER_API_URL)
@@ -21,7 +21,13 @@ class WeatherApi() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
+
     interface Service {
+
+        /**
+         *  Gets the current weather and 8 days prediction
+         *  @return Observable
+         * */
         @GET("onecall?units=metric&exclude=minutely,hourly,alerts")
         fun fetchWeather(
             @Query("lat") lat: Double,
@@ -31,63 +37,5 @@ class WeatherApi() {
     }
 
     val service: Service = retrofit.create(Service::class.java)
-
 }
 
-data class Weather(
-    val lat: Float,
-    val lon: Float,
-    val timezone: String,
-    val current: Current,
-    val daily: List<DayDescription>
-) {
-    val curentTemp: String
-        get() { return "${current.temp} °C"}
-
-    val feelsLike: String
-        get() { return "Feels like ${current.feels_like} °C"}
-
-    val windSpeed: String
-        get() { return "${current.wind_speed} m/s"}
-
-    val windDirection: Int
-        get() { return current.wind_deg + 180}
-
-    val humidity: String
-        get() { return "${current.humidity} %"}
-
-    val description: String
-        get() { return current.weather[0].description  }
-
-    val icon: String
-        get() { return "https://openweathermap.org/img/wn/${current.weather[0].icon}@4x.png"}
-}
-
-data class Current (
-    val temp: Float,
-    val feels_like: Float,
-    val pressure: Int,
-    val humidity: Int,
-    val wind_speed: Float,
-    val wind_deg: Int,
-    val weather: List<WeatherDescription>
-)
-
-data class WeatherDescription (
-    val main: String,
-    val description: String,
-    val icon: String
-)
-
-data class DayDescription (
-    val temp: Temp,
-    val weather: List<WeatherDescription>
-){
-    val dayTemp: String
-        get() { return "${temp.day} °C"}
-}
-
-data class Temp (
-    val day: Float,
-    val night: Float
-)

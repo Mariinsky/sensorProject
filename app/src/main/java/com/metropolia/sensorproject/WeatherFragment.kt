@@ -1,20 +1,19 @@
 package com.metropolia.sensorproject
 
-
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.metropolia.sensorproject.services.DayDescription
-import com.metropolia.sensorproject.services.Weather
+import com.metropolia.sensorproject.models.DayDescription
+import com.metropolia.sensorproject.models.Weather
+import com.metropolia.sensorproject.utils.degToCompass
+import com.metropolia.sensorproject.utils.rotateImage
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -22,27 +21,29 @@ import io.reactivex.rxjava3.schedulers.Schedulers.io
 import kotlinx.android.synthetic.main.fragment_weather.*
 import java.net.URL
 
-
+/**
+ *  Displays current weather for location and a weather prediction for upcoming days
+ * */
 class WeatherFragment : Fragment() {
 
     private var dayList = ArrayList<DayDescription>()
-    private lateinit var dayAdapter: CustomAdapter
-    private var added: Boolean = false
+    private lateinit var dayAdapter: WeatherAdapter
     private val disposeOnDestroy = CompositeDisposable()
 
    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) =
-        inflater.inflate(R.layout.fragment_weather, container, false)!!
-
+    ) = inflater.inflate(R.layout.fragment_weather, container, false)!!
 
     override fun onResume() {
         super.onResume()
+        // Loads a loading gif
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
+
+        // Rx Subscription to load weather, icon and bind the data to views
         StepApp
             .weatherStream
             .take(1)
@@ -53,25 +54,30 @@ class WeatherFragment : Fragment() {
                 Pair(it, BitmapFactory.decodeStream(imgStream))
             }
             .observeOn(AndroidSchedulers.mainThread())
-
-
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
                 recyclerViewSetUp(weather)
-
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
             }
             .addTo(disposeOnDestroy)
+
         StepApp.getCurrentWeather()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        disposeOnDestroy.clear()
+    }
 
-    //recycler view for 8 days forecast
+    /**
+     * Recyclerview for weather forcast
+     * @param weather Weather
+     * */
     private fun recyclerViewSetUp(weather: Weather) {
         dayList.clear()
         weather.daily.forEach { dayList.add(it) }
-        dayAdapter = CustomAdapter(dayList)
+        dayAdapter = WeatherAdapter(dayList)
         val mLayoutManager = LinearLayoutManager(activity)
         mLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         lv_weather.layoutManager = mLayoutManager
@@ -79,45 +85,13 @@ class WeatherFragment : Fragment() {
         Log.d("weather", "$dayList")
     }
 
-    //define direction from angle
-    private fun degToCompass(num: Int): String {
-        val degree = num / 22.5 + 0.5
-        val arr = arrayOf(
-            "N",
-            "NNE",
-            "NE",
-            "ENE",
-            "E",
-            "ESE",
-            "SE",
-            "SSE",
-            "S",
-            "SSW",
-            "SW",
-            "WSW",
-            "W",
-            "WNW",
-            "NW",
-            "NNW"
-        )
-        return arr[(degree % 16).toInt()]
-    }
-
-    //rotate arrow according to wind degree
-    private fun rotateImage(image: ImageView, angle: Int) {
-        val matrix = Matrix()
-        image.scaleType = ImageView.ScaleType.MATRIX
-        matrix.postRotate(
-            angle.toFloat(),
-            image.drawable.bounds.width() / 2.toFloat(),
-            image.drawable.bounds.height() / 2.toFloat()
-        )
-        image.imageMatrix = matrix
-    }
-
-
+    /**
+     *  Sets up the views
+     *  @param weather Weather
+     *  @param icon Bitmap
+     * */
     private fun setupWeatherViews(weather: Weather, icon: Bitmap) {
-        txtTemp.text = weather.curentTemp
+        txtTemp.text = weather.currentTemp
         txtMain.text = weather.description
         txtFeel.text = weather.feelsLike
         txtHumidity.text = weather.humidity
@@ -127,10 +101,4 @@ class WeatherFragment : Fragment() {
         weather_icon.setImageBitmap(icon)
         rotateImage(pointer, weather.windDirection)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposeOnDestroy.clear()
-    }
-
 }

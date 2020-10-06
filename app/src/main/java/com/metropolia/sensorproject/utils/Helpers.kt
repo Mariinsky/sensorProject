@@ -1,14 +1,9 @@
 package com.metropolia.sensorproject.utils
 
-import android.animation.ObjectAnimator
-import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.drawable.VectorDrawable
 import android.location.Location
-import android.os.Build
-import android.view.animation.DecelerateInterpolator
-import android.widget.ProgressBar
-import androidx.core.content.ContextCompat
+import android.widget.ImageView
 import com.metropolia.sensorproject.R
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -17,12 +12,19 @@ import org.osmdroid.views.overlay.Polyline
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+/**
+ * Compare dates helper
+ * @param date  Date
+ * @return Boolean
+ * */
 fun compareDate(date: Date): Boolean {
     val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
     return formatter.parse(formatter.format(date)) == formatter.parse(formatter.format(Date()))
 }
 
+/**
+ *  Sets the tarting location on the map with a pin
+ * */
 fun MapView.setStartingLocation(location: Location) {
         val startingPoint = GeoPoint(
             location.latitude,
@@ -38,38 +40,62 @@ fun MapView.setStartingLocation(location: Location) {
         this.overlays.add(marker)
 }
 
+/**
+ *  Updates the map view with the route polyline
+ * */
 fun MapView.updateRoute(geoPoints: MutableList<GeoPoint>) {
     this.setMultiTouchControls(true)
     this.setBuiltInZoomControls(true)
     this.overlays.clear()
     val polyline = Polyline()
-    polyline.setColor(R.color.pink);
-    polyline.getPaint().setStrokeCap(Paint.Cap.ROUND);
+    polyline.setColor(R.color.pink)
+    polyline.getPaint().setStrokeCap(Paint.Cap.ROUND)
     polyline.setPoints(geoPoints)
     this.controller.setCenter(geoPoints.last())
     this.overlays.add(polyline)
     this.invalidate()
 }
 
-
-fun getFormattedDate(date: Date): String {
-    val formatter = SimpleDateFormat("d.M.yyyy", Locale.ENGLISH)
-    return  formatter.format(date)
-}
-
-fun ProgressBar.setBigMax(max: Int) {
-    this.max = max * 1000
-}
-
-fun ProgressBar.animateTo(progressTo: Int, startDelay: Long) {
-    val animation = ObjectAnimator.ofInt(
-        this,
-        "progress",
-        this.progress,
-        progressTo * 1000
+/**
+ * Get the wind direction as a heading string
+ * @param num wind direction as Int
+ * @return String
+ * */
+fun degToCompass(num: Int): String {
+    val degree = num / 22.5 + 0.5
+    val arr = arrayOf(
+        "N",
+        "NNE",
+        "NE",
+        "ENE",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "WNW",
+        "NW",
+        "NNW"
     )
-    animation.duration = 800
-    animation.interpolator = DecelerateInterpolator()
-    animation.startDelay = startDelay
-    animation.start()
+    return arr[(degree % 16).toInt()]
+}
+
+/**
+ * Rotates wind arrow according to angle
+ * @param image ImageView
+ * @param angle Int
+ * */
+fun rotateImage(image: ImageView, angle: Int) {
+    val matrix = Matrix()
+    image.scaleType = ImageView.ScaleType.MATRIX
+    matrix.postRotate(
+        angle.toFloat(),
+        image.drawable.bounds.width() / 2.toFloat(),
+        image.drawable.bounds.height() / 2.toFloat()
+    )
+    image.imageMatrix = matrix
 }

@@ -19,9 +19,14 @@ import com.google.android.gms.location.*
 import com.metropolia.sensorproject.StepApp
 import org.osmdroid.util.GeoPoint
 
+/**
+ *  Creates a step sensor service
+ *  @param sensorManager
+ * */
 class StepSensorService(private val sensorManager: SensorManager) : SensorEventListener {
     private val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
+    // registers listener for sensor
     fun registerListener() {
         if (stepDetectorSensor == null) { return }
         stepDetectorSensor.also {
@@ -29,10 +34,12 @@ class StepSensorService(private val sensorManager: SensorManager) : SensorEventL
         }
     }
 
+    // removes the listener from sensor
     fun unregisterListener() {
         sensorManager.unregisterListener(this)
     }
 
+    // on sensor event passes the value to global object
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
             if(event.sensor == stepDetectorSensor) {
@@ -44,10 +51,17 @@ class StepSensorService(private val sensorManager: SensorManager) : SensorEventL
     override fun onAccuracyChanged(sensor: Sensor?, value: Int) { }
 }
 
+/**
+ *  Location service gets updates from gps
+ *  @param context
+ * */
 class LocationService(private val context: Context): LocationListener {
     private val locationClient = LocationServices.getFusedLocationProviderClient(context)
     private val locationCallback = locationCallback()
 
+    /**
+     *  starts getting location as a rx stream
+     * */
     fun startGettingLocation() {
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -64,6 +78,8 @@ class LocationService(private val context: Context): LocationListener {
         )
     }
 
+    /**
+     * stops location updates */
     fun stopLocationService() {
         locationClient.removeLocationUpdates(locationCallback)
     }
@@ -77,6 +93,7 @@ class LocationService(private val context: Context): LocationListener {
         }
     }
 
+    // location request builder
     private fun createLocationRequest(): LocationRequest? {
         return LocationRequest.create()?.apply {
             interval = 5000
@@ -85,11 +102,9 @@ class LocationService(private val context: Context): LocationListener {
         }
     }
 
-    override fun onLocationChanged(location: Location?) {
-        Log.i("XXX", "on location changed: ${location?.speed}")
-    }
+    override fun onLocationChanged(location: Location?) {  }
 
-
+    // get single location
     @SuppressLint("MissingPermission")
     fun getLocation() {
          locationClient.lastLocation.addOnSuccessListener {
