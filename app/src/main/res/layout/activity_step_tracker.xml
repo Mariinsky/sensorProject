@@ -25,7 +25,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tabGravity="fill"
             app:tabMode="fixed"
-            app:tabTextAppearance="@style/CustomTabStyle" />
+            app:tabTextAppearance="@style/CustomTabStyle"
+            app:tabSelectedTextColor="@color/darkPink"
+            />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager

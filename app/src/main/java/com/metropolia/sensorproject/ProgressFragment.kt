@@ -39,7 +39,6 @@ import kotlinx.android.synthetic.main.alert_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_progress.*
 import kotlinx.android.synthetic.main.fragment_progress.view.*
 import kotlinx.android.synthetic.main.fragment_progress.view.map
-import kotlinx.android.synthetic.main.fragment_today.view.*
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import java.lang.reflect.Type
@@ -67,6 +66,7 @@ class ProgressFragment : Fragment() {
         rootView.map?.setTileSource(TileSourceFactory.MAPNIK)
         rootView.map?.setMultiTouchControls(true)
         rootView.map?.controller?.setZoom(9.0)
+        rootView.map?.visibility = View.GONE
 
         viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         // retrieve data
@@ -279,6 +279,7 @@ class ProgressFragment : Fragment() {
                     day_wind?.text = weather.windSpeed
                 }
                 if(route != null) {
+                    map?.visibility = View.VISIBLE
                     map?.updateRoute(route)
                 }
             }.addTo(unsubscribeOnDestroy)
