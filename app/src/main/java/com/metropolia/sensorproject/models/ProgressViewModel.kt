@@ -25,7 +25,9 @@ import org.osmdroid.util.GeoPoint
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
+/**
+ *  ViewModel for progress fragment
+ * */
 class ProgressViewModel(application: Application) : AndroidViewModel(application) {
 
     private val db by lazy { AppDB.get(application) }
@@ -34,23 +36,20 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
     private val getLimitedActivities: PublishSubject<Int> = PublishSubject.create()
     private val locationService = LocationService(application)
     private val stepSensor = StepSensorService(application.getSystemService(Context.SENSOR_SERVICE) as SensorManager)
-
     private var valuesWriter: Disposable? = null
-
-    val allActivitiesSubject: PublishSubject<List<DayActivity>> = PublishSubject.create()
+    private val allActivitiesSubject: PublishSubject<List<DayActivity>> = PublishSubject.create()
     val limitedActivitiesSubject: PublishSubject<Pair<MutableList<Int>, List<DayActivity>>> = PublishSubject.create()
-
     val context = getApplication<Application>().applicationContext
     val emitStepsCount: PublishSubject<Int> = PublishSubject.create()
     val startingLocationSubject: ReplaySubject<Location> = ReplaySubject.create()
-
     val locationServiceSubject: PublishSubject<Pair<String, MutableList<GeoPoint>>> = PublishSubject.create()
     val startServices = PublishSubject.create<Unit>()
     val stopServices = PublishSubject.create<Unit>()
-
-
     val gson = Gson()
 
+    /**
+     * Setup rx streams on init
+     * */
     init {
         StepApp
             .stepStream
@@ -77,8 +76,6 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
                 stepSensor.unregisterListener()
                 disposeWriter()
             }
-
-
         StepApp
             .locationStream
             .take(1)
@@ -109,20 +106,25 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
             }
 
     }
-
-    fun getAllActivities() {
-        getAllActivities.onNext(Unit)
-    }
-
+    /**
+     * insert dayactivity into roomsql database
+     * */
     fun insertActivity(activity: DayActivity) {
         insertNewActivity.onNext(activity)
     }
 
+    /**
+     * get limited amount of day activities from database
+     * @param limit Int
+     * */
     fun getLimitedActivities(limit: Int) {
         getLimitedActivities.onNext(limit)
     }
 
-    fun startStepWriter() {
+    /**
+     * Starts the file writer fro persistent data. Ticks every 5s
+     * */
+    private fun startStepWriter() {
         valuesWriter = Observable
             .interval(5, TimeUnit.SECONDS)
             .timeInterval()
@@ -138,12 +140,15 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
                 )
                 val json = gson.toJson(day)
                     context.openFileOutput(DAY_VALUES_FILE, Context.MODE_PRIVATE).use {
-                        Log.i("XXX", "writing values")
                         it?.write(json.toByteArray())
                     }
             }
     }
-    fun disposeWriter() {
+
+    /**
+     * disposes the fileWriter
+     * */
+    private fun disposeWriter() {
         valuesWriter?.dispose()
     }
 }

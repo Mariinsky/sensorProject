@@ -22,6 +22,8 @@ import com.metropolia.sensorproject.services.LocationService
 import com.metropolia.sensorproject.utils.compareDate
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,39 +33,62 @@ import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
+/**
+ *  - Checks required permissions
+ *  - Compares current date to the date of the last entry in roomSQL (ignores < days)
+ *  - If date is different reads the content of an internal storage file.
+ *      - writes the values of the file to database
+ *      - Resets the values to 0
+ *  - Checks prefs if user is already created.
+ *  - If no user prompts with user creation form with validation
+ *  - Lunches the StepTrackerActivity
+ * */
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-    lateinit var sharedPreferences: SharedPreferences
-    private val db by lazy { AppDB.get(application) }
+    private lateinit var sharedPreferences: SharedPreferences
     private val checkedPermissionSubject: PublishSubject<Unit> = PublishSubject.create()
     private val appReadySubject: PublishSubject<DayActivity> = PublishSubject.create()
+    private val unsubscribeOnDestroy = CompositeDisposable()
+    private val db by lazy { AppDB.get(application) }
     private lateinit var locationService: LocationService
     private val gson = Gson()
-    var isLogedIn = false
+    private var isLogedIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val ctx = applicationContext
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
+        Configuration.getInstance().load(applicationContext, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(R.layout.activity_main)
-        Glide
-            .with(this)
-            .load(R.drawable.giphy)
-            .into(gif)
+
         locationService = LocationService(this)
         sharedPreferences= getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         isLogedIn = sharedPreferences.getBoolean("CHECKBOX", false)
+
+        loadGif()
         inputCheck()
         btnSave.setOnClickListener(this)
+        setSubscriptions()
+        checkPermissions()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unsubscribeOnDestroy.clear()
+    }
+
+
+    /**
+     *  Sets up rx subscriptions
+     *  streams disposed on destroy
+     * */
+    private fun setSubscriptions() {
         checkedPermissionSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 checkDateAndStart()
-            }
+            }.addTo(unsubscribeOnDestroy)
 
         appReadySubject
-            .delay(1, TimeUnit.SECONDS)
+            .delay(1, TimeUnit.SECONDS) // Delay just for to see more of the cool dog animation
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 StepApp.setValues(it)
@@ -75,9 +100,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     initial.visibility = View.GONE
                 }
-            }
+            }.addTo(unsubscribeOnDestroy)
+    }
 
-        checkPermissions()
+    /**
+     *  Loads cure loading dog gif
+     * */
+    private fun loadGif() {
+        Glide
+            .with(this)
+            .load(R.drawable.giphy)
+            .into(gif)
     }
 
     //validation for user form
@@ -191,7 +224,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         finish()
     }
 
-
+    /**
+     *  Checks permissions and if not granted presents a dialog asking for permissions.
+     * */
     private fun checkPermissions(){
         if (
             ActivityCompat.checkSelfPermission(
@@ -213,6 +248,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     *  Checks the result of permission request.
+     *  If result contains denied alert dialog with explanation will be presented why the user should give permissions.
+     * */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -227,6 +266,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     *  Alert dialog with explanation why permissions are needed.
+     * */
     private fun showPermissionsAlert() {
         AlertDialog
             .Builder(this)
@@ -245,6 +287,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .show()
     }
 
+    /**
+     *  Tries to read values from file. Converts the json string from file to object.
+     *  If failed return initial values.
+     *  @return DayActivity
+     * */
     private fun readValuesFromFile(): DayActivity {
         return try {
             val reader = openFileInput(DAY_VALUES_FILE)?.bufferedReader().use { it?.readText() }
@@ -254,6 +301,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     *  Compares current date to last entry date in database.
+     *  if date is different writes the values from file to database and resets the file.
+     * */
     private fun checkDateAndStart() {
         Observable
             .just { db.activityDao().getLimitedActivities(1) }
@@ -275,6 +326,4 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
     }
-
-
 }

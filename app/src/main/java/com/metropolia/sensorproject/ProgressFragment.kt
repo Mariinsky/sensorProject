@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,14 +21,14 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.metropolia.sensorproject.models.ProgressViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.metropolia.sensorproject.database.DayActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.metropolia.sensorproject.services.Weather
+
+import com.metropolia.sensorproject.models.Weather
 import com.metropolia.sensorproject.utils.updateRoute
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -62,13 +61,12 @@ class ProgressFragment : Fragment() {
     ): View? {
         // Inflate the layout and set element for this fragment
         val rootView = inflater.inflate(R.layout.fragment_progress, container, false)
-
+        viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         rootView.map?.setTileSource(TileSourceFactory.MAPNIK)
         rootView.map?.setMultiTouchControls(true)
         rootView.map?.controller?.setZoom(9.0)
         rootView.map?.visibility = View.GONE
 
-        viewModel = ViewModelProvider(this).get(ProgressViewModel::class.java)
         // retrieve data
         preferences = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         goal = preferences.getInt("GOAL", 0)
@@ -255,6 +253,11 @@ class ProgressFragment : Fragment() {
                 setupWeekStatistic(steps)
             }
 
+        /**
+         *  bar tapped on chart
+         *  convers json strings inside DayActivity
+         *  and binds the values to views
+         * */
         barChartValueTapped
             .observeOn(io())
             .map {
@@ -271,11 +274,11 @@ class ProgressFragment : Fragment() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { (day, weather, route) ->
-                day_steps?.text = "Steps: ${day.Steps}"
-                day_distance?.text = "Distance: ${day.distance.toInt()}m"
+                day_steps?.text = day.getSteps
+                day_distance?.text = day.getDistance
                 if(weather != null) {
                     day_weather_container?.visibility = View.VISIBLE
-                    day_temp?.text = weather.curentTemp
+                    day_temp?.text = weather.currentTemp
                     day_wind?.text = weather.windSpeed
                 }
                 if(route != null) {

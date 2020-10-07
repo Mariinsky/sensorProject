@@ -25,6 +25,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
 
+/**
+ * debug activity to test stuff
+ * */
 class DevActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ProgressViewModel
