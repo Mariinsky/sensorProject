@@ -27,7 +27,12 @@ import java.net.URL
 class WeatherFragment : Fragment() {
 
     private var dayList = ArrayList<DayDescription>()
+<<<<<<< HEAD
+    private lateinit var dayAdapter: CustomAdapter
+    private var added: Boolean = false
+=======
     private lateinit var dayAdapter: WeatherAdapter
+>>>>>>> 5e888ef1f73b4f6488e8a487df9f417fe5a6f9be
     private val disposeOnDestroy = CompositeDisposable()
 
    override fun onCreateView(
@@ -42,8 +47,11 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.giphy)
             .into(gif)
+<<<<<<< HEAD
+=======
 
         // Rx Subscription to load weather, icon and bind the data to views
+>>>>>>> 5e888ef1f73b4f6488e8a487df9f417fe5a6f9be
         StepApp
             .weatherStream
             .take(1)
@@ -54,9 +62,12 @@ class WeatherFragment : Fragment() {
                 Pair(it, BitmapFactory.decodeStream(imgStream))
             }
             .observeOn(AndroidSchedulers.mainThread())
+
+
             .subscribe { (weather, icon) ->
                 setupWeatherViews(weather, icon)
                 recyclerViewSetUp(weather)
+
                 //loading disappears after data loaded
                 gif.visibility = View.GONE
             }

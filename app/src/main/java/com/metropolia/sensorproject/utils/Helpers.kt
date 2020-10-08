@@ -51,6 +51,7 @@ fun MapView.updateRoute(geoPoints: MutableList<GeoPoint>) {
     polyline.setColor(R.color.pink)
     polyline.getPaint().setStrokeCap(Paint.Cap.ROUND)
     polyline.setPoints(geoPoints)
+    polyline.setColor(R.color.darkPink)
     this.controller.setCenter(geoPoints.last())
     this.overlays.add(polyline)
     this.invalidate()

@@ -28,7 +28,6 @@
             android:text="@string/date"
             android:textColor="@color/dark"/>
 
-
         <TextView
             android:id="@+id/temp"
             android:layout_width="wrap_content"
@@ -37,7 +36,6 @@
             android:layout_marginBottom="5dp"
             android:text="@string/temp"
             android:textColor="@color/dark"/>
-
 
         <ImageView
             android:id="@+id/icon"

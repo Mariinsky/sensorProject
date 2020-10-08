@@ -76,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/initial_step"
-                        android:textSize="17sp"
+                        android:textSize="20sp"
                         android:textColor="@color/dark"/>
 
                     <ImageView

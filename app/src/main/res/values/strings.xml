@@ -42,6 +42,7 @@
     <string name="submit_button">Submit</string>
     <string name="update_form">Update user data form</string>
     <string name="progress_bar">Progress bar</string>
+    <string name="total">Total</string>
     <string name="graph">graph show latest 7days data</string>
     <string name="map">map shows route</string>
     <string name="distance">distance icon</string>
@@ -54,5 +55,4 @@
     <string name="date">date</string>
     <string name="temp">temperature icon</string>
     <string name="icon">weather icon</string>
-    <string name="total">Total</string>
 </resources>

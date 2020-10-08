@@ -63,6 +63,7 @@ class StepTrackerActivity : AppCompatActivity() {
         viewPager.adapter = adapter
         tablayout.setupWithViewPager(viewPager)
 
+
         //add icon to tab
         tablayout.getTabAt(0)!!.setIcon(R.drawable.ic_footprint)
         tablayout.getTabAt(1)!!.setIcon(R.drawable.ic_development)

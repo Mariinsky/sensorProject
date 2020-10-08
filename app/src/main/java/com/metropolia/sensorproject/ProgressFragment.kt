@@ -27,6 +27,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.metropolia.sensorproject.database.DayActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 import com.metropolia.sensorproject.models.Weather
 import com.metropolia.sensorproject.utils.updateRoute
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -285,7 +286,6 @@ class ProgressFragment : Fragment() {
                     map?.updateRoute(route)
                 }
             }.addTo(unsubscribeOnDestroy)
-        
         viewModel.getLimitedActivities(7)
     }
 
