@@ -73,11 +73,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.archLifecycleVersion"
 
-    // WorkManager
-    def work_version = "2.4.0"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation "androidx.work:work-rxjava2:$work_version"
-
     //Graph
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 

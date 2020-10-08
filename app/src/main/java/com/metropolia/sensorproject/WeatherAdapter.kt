@@ -67,19 +67,6 @@ class WeatherAdapter(private var list: ArrayList<DayDescription>) : RecyclerView
         }
         
         //animated item when hover on
-<<<<<<< HEAD:app/src/main/java/com/metropolia/sensorproject/CustomAdapter.kt
-        holder.itemView.setOnFocusChangeListener(object: View.OnFocusChangeListener{
-            override fun onFocusChange(p0: View?, p1: Boolean) {
-                if(p1) {
-                    val anim = AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.scale_out)
-                    holder.itemView.startAnimation(anim)
-                    anim.fillAfter = true
-                } else {
-                    val anim = AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.scale_in)
-                    holder.itemView.startAnimation(anim)
-                    anim.fillAfter = true
-                }
-=======
         holder.itemView.onFocusChangeListener = View.OnFocusChangeListener { _, p1 ->
             if(p1) {
                 val anim = AnimationUtils.loadAnimation(holder.itemView.context, R.anim.scale_out)
@@ -89,7 +76,6 @@ class WeatherAdapter(private var list: ArrayList<DayDescription>) : RecyclerView
                 val anim = AnimationUtils.loadAnimation(holder.itemView.context, R.anim.scale_in)
                 holder.itemView.startAnimation(anim)
                 anim.fillAfter = true
->>>>>>> 5e888ef1f73b4f6488e8a487df9f417fe5a6f9be:app/src/main/java/com/metropolia/sensorproject/WeatherAdapter.kt
             }
         }
     }

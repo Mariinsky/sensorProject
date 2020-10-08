@@ -172,11 +172,6 @@ class ProgressFragment : Fragment() {
 
             //validate on saving
             mDialogView.btnSave.setOnClickListener(object : View.OnClickListener {
-                val newName: String = mDialogView.editTxtName.text.toString()
-                val newWeight: Int = mDialogView.editTxtWeight.text.toString().toInt()
-                val newHeight: Int = mDialogView.editTxtHeight.text.toString().toInt()
-                val newGoal: Int = mDialogView.editTxtGoal.text.toString().toInt()
-
                 private fun validate(): Boolean {
                     if (mDialogView.editTxtName.text.toString().isEmpty()) {
                         mDialogView.layoutEditName.error = getString(R.string.input_empty)
@@ -204,21 +199,16 @@ class ProgressFragment : Fragment() {
                 }
 
                 private fun saveData() {
-                    val name: String = mDialogView.editTxtName.text.toString()
-                    val weight: Int = mDialogView.editTxtWeight.text.toString().toInt()
-                    val height: Int = mDialogView.editTxtHeight.text.toString().toInt()
-                    val goal: Int = mDialogView.editTxtGoal.text.toString().toInt()
-                    //save data
                     val editor: SharedPreferences.Editor = preferences.edit()
-                    editor.putString("NAME", name)
-                    editor.putInt("WEIGHT", weight)
-                    editor.putInt("HEIGHT", height)
-                    editor.putInt("GOAL", goal)
+                    editor.putString("NAME", mDialogView.editTxtName.text.toString())
+                    editor.putInt("WEIGHT", mDialogView.editTxtWeight.text.toString().toInt())
+                    editor.putInt("HEIGHT", mDialogView.editTxtHeight.text.toString().toInt())
+                    editor.putInt("GOAL", mDialogView.editTxtGoal.text.toString().toInt())
                     editor.putBoolean("CHECKBOX", true)
                     editor.apply()
 
                     val intent = Intent(activity, StepTrackerActivity::class.java)
-                    intent.putExtra("TabNumber", "1");
+                    intent.putExtra("TabNumber", "1")
                     startActivity(intent)
                 }
 
@@ -302,7 +292,7 @@ class ProgressFragment : Fragment() {
         val days = ArrayList<String>()
         //generate data for each bar and xaxis
         activityData.forEach { day ->
-            day.Steps?.toFloat()?.let { BarEntry(entries.size.toFloat(), it) }?.let { entries.add(it) }
+            day.Steps.toFloat().let { BarEntry(entries.size.toFloat(), it) }.let { entries.add(it) }
             days.add(SimpleDateFormat("MM-dd", Locale.ENGLISH).format(day.date))
         }
 
@@ -341,18 +331,17 @@ class ProgressFragment : Fragment() {
         })
         //customize xAxis
         val xAxis = barchart.xAxis
-        xAxis.granularity = 1f; // minimum axis-step (interval) is 1
-        xAxis.position = XAxis.XAxisPosition.BOTTOM;
+        xAxis.granularity = 1f // minimum axis-step (interval) is 1
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
         val xAxisFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String? {
-                return days.get(value.toInt())
+                return days[value.toInt()]
             }
-            fun getDecimalDigits(): Int { return 0 }
         }
         with(xAxis) {
             valueFormatter = xAxisFormatter
             labelCount = 7
         }
-        barchart.invalidate(); // refresh
+        barchart.invalidate() // refresh
     }
 }
