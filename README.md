@@ -38,7 +38,7 @@ User interface is followed design material convention and accessibility.
 * [Glide](https://github.com/bumptech/glide)
 
 ### Running the project:
-* You will need to create a file keys.kt into project folder and provide your own openweathermap api key **const val WEATHER_API_KEY = YOUR API KEY**
+* You will need to create a file **keys.kt** into project folder and provide your own openweathermap api key **const val WEATHER_API_KEY = YOUR API KEY**
 * You can access dev menu by tapping on top bar where you can clear the db or generate random data.
 <div>
 <img src="https://github.com/Mariinsky/sensorProject/blob/develop/screenshots/1.png" width=20%>
